@@ -29,8 +29,11 @@ public class MainActivity extends AppCompatActivity {
         mUser = mAuth.getCurrentUser();
 
     }
-
     public void gotoSignup(View view) {
+        if (mUser == null) startActivity(new Intent(this, SignupActivity.class));
+    }
+
+    public void gotoSignin(View view) {
         if (mUser == null) startActivityForResult(new Intent(this, LoginActivity.class), REQUEST_GET_FIREBASE_AUTH);
     }
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
