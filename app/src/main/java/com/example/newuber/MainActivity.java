@@ -1,7 +1,11 @@
 package com.example.newuber;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Intent;
+import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -19,9 +23,12 @@ public class MainActivity extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
     private FirebaseUser mUser;
+    private View MainView;
+    private View MainViewProgress;
 
     private Button joinUsButton;
 
+    // not necessary
     private static final int REQUEST_GET_FIREBASE_AUTH = 0;
 
 
@@ -33,9 +40,13 @@ public class MainActivity extends AppCompatActivity {
         selfActivity = this;
 
         joinUsButton = findViewById(R.id.btn_joinus);
-//
+        MainView = findViewById(R.id.main_view);
+        MainViewProgress = findViewById(R.id.main_view_progress);
+
+        showProgress(true);
         mAuth = FirebaseAuth.getInstance();
         mUser = mAuth.getCurrentUser();
+        showProgress(false);
 
         if (mUser != null) joinUsButton.setVisibility(View.GONE);
 
@@ -63,6 +74,35 @@ public class MainActivity extends AppCompatActivity {
             mUser = null;
         }
     }
+
+    /**
+     * Shows the progress UI and hides the login form.
+     */
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
+    private void showProgress(final boolean show) {
+        // On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
+        // for very easy animations. If available, use these APIs to fade-in
+        // the progress spinner.
+        int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
+
+        MainView.setVisibility(show ? View.GONE : View.VISIBLE);
+        MainView.animate().setDuration(shortAnimTime).alpha(
+                show ? 0 : 1).setListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                MainView.setVisibility(show ? View.GONE : View.VISIBLE);
+            }
+        });
+
+        MainViewProgress.setVisibility(show ? View.VISIBLE : View.GONE);
+        MainViewProgress.animate().setDuration(shortAnimTime).alpha(
+                show ? 1 : 0).setListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                MainViewProgress.setVisibility(show ? View.VISIBLE : View.GONE);
+            }
+        });
+
     public void gotoHome(View view){
         //Toast.makeText(selfActivity, "you clicked", Toast.LENGTH_SHORT).show();
         startActivity(new Intent(this, home.class));

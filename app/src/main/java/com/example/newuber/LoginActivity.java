@@ -52,6 +52,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private EditText mPasswordView;
     private View mProgressView;
     private View mLoginFormView;
+    private Button linkReset;
 
     private final String TAG = "LoginActivity";
 
@@ -61,10 +62,20 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         Log.d(TAG, "OnCreate");
         setContentView(R.layout.activity_login);
 
-        mEmailView = findViewById(R.id.email);
+        mEmailView = findViewById(R.id.login_email);
+        linkReset = findViewById(R.id.link_reset);
+
+        linkReset.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(LoginActivity.this, ResetPasswordActivity.class));
+                Log.d(TAG, "Link CLicked");
+            }
+        });
+
         populateAutoComplete();
 
-        mPasswordView = findViewById(R.id.password);
+        mPasswordView = findViewById(R.id.login_password);
         mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
@@ -76,8 +87,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             }
         });
 
-        Button mEmailSignInButton = findViewById(R.id.email_sign_in_button);
-        mEmailSignInButton.setOnClickListener(new OnClickListener() {
+        Button mLoginButton = findViewById(R.id.login_button);
+        mLoginButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
                 attemptLogin();
@@ -188,7 +199,11 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                             showProgress(false);
 
                             if (!task.isSuccessful()) {
-                                Toast.makeText(LoginActivity.this, "Authentication failed! " + Objects.requireNonNull(task.getException()).getMessage(), Toast.LENGTH_LONG).show();
+                                Toast.makeText(LoginActivity.this,
+                                        "Authentication failed! " + Objects.requireNonNull(task.getException()).getMessage(),
+                                        Toast.LENGTH_LONG)
+                                        .show();
+
                                 Log.e(TAG, "Auth Failed: " + task.getException());
                             } else {
                                 Toast.makeText(LoginActivity.this, "Signup successful!", Toast.LENGTH_LONG).show();
