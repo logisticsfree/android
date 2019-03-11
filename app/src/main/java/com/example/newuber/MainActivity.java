@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.example.newuber.signup.SignupActivity;
 import com.google.firebase.auth.FirebaseAuth;
@@ -101,5 +102,9 @@ public class MainActivity extends AppCompatActivity {
                 MainViewProgress.setVisibility(show ? View.VISIBLE : View.GONE);
             }
         });
+
+    public void gotoHome(View view){
+        //Toast.makeText(selfActivity, "you clicked", Toast.LENGTH_SHORT).show();
+        startActivity(new Intent(this, home.class));
     }
 }

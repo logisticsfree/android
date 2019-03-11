@@ -13,4 +13,6 @@
     <color name="darkGrayOnFocus">#0F0E0E</color>
 
     <color name="colorMaterialGray">#3f4451</color>
+    <color name="colorWhiteTransparent">#80ffffff</color>
+
 </resources>
