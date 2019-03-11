@@ -51,22 +51,28 @@ public class MainActivity extends AppCompatActivity {
         if (mUser != null) joinUsButton.setVisibility(View.GONE);
 
     }
+
     public void gotoSignup(View view) {
-        if (mUser == null) startActivity(new Intent(this, SignupActivity.class).putExtra("newMember", mUser==null));
+        if (mUser == null)
+            startActivity(new Intent(this, SignupActivity.class).putExtra("newMember", mUser == null));
     }
 
     public void gotoSignin(View view) {
-        if (mUser == null) startActivityForResult(new Intent(this, LoginActivity.class), REQUEST_GET_FIREBASE_AUTH);
+        if (mUser == null)
+            startActivityForResult(new Intent(this, LoginActivity.class), REQUEST_GET_FIREBASE_AUTH);
     }
+
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_GET_FIREBASE_AUTH && resultCode == Activity.RESULT_OK) {
             if (data.getBooleanExtra("success", false))
                 this.mUser = mAuth.getCurrentUser();
         }
     }
+
     public void gotoProfile(View view) {
         if (mUser != null) startActivity(new Intent(this, ProfileActivity.class));
     }
+
     public void logout(View view) {
         if (mUser != null) {
             mAuth.signOut();
@@ -102,8 +108,9 @@ public class MainActivity extends AppCompatActivity {
                 MainViewProgress.setVisibility(show ? View.VISIBLE : View.GONE);
             }
         });
+    }
 
-    public void gotoHome(View view){
+    public void gotoHome(View view) {
         //Toast.makeText(selfActivity, "you clicked", Toast.LENGTH_SHORT).show();
         startActivity(new Intent(this, home.class));
     }
