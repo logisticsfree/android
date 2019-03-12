@@ -15,7 +15,7 @@
         android:theme="@style/AppTheme">
       
         <activity android:name=".ResetPasswordActivity"></activity>
-        <activity android:name=".home" />
+        <activity android:name=".home.home" />
         <activity android:name=".signup.SignupActivity3" />
         <activity android:name=".signup.SignupActivity2" />
         <activity
