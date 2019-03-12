@@ -1,4 +1,4 @@
-package com.example.newuber;
+package com.example.newuber.home;
 
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -8,6 +8,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.widget.FrameLayout;
+
+import com.example.newuber.R;
 
 public class home extends AppCompatActivity {
     private BottomNavigationView mMainNav;
