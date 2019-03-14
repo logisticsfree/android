@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.newuber">
+    package="com.example.logisticsfree">
     <!-- To auto-complete the email text field in the login form with the user's emails -->
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="android.permission.READ_PROFILE" />
@@ -14,18 +14,18 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
       
-        <activity android:name=".ResetPasswordActivity"></activity>
-        <activity android:name=".home.home" />
-        <activity android:name=".signup.SignupActivity3" />
-        <activity android:name=".signup.SignupActivity2" />
+        <activity android:name="com.example.logisticsfree.ResetPasswordActivity"></activity>
+        <activity android:name="com.example.logisticsfree.home.home" />
+        <activity android:name="com.example.logisticsfree.signup.SignupActivity3" />
+        <activity android:name="com.example.logisticsfree.signup.SignupActivity2" />
         <activity
-            android:name=".signup.SignupActivity"
+            android:name="com.example.logisticsfree.signup.SignupActivity"
             android:label="@string/title_activity_signup" />
-        <activity android:name=".ProfileActivity" />
+        <activity android:name="com.example.logisticsfree.ProfileActivity" />
         <activity
-            android:name=".LoginActivity"
+            android:name="com.example.logisticsfree.LoginActivity"
             android:label="@string/title_activity_login" />
-        <activity android:name=".MainActivity">
+        <activity android:name="com.example.logisticsfree.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

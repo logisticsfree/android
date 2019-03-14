@@ -1,4 +1,4 @@
-package com.example.newuber;
+package com.example.logisticsfree;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;

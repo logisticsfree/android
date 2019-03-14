@@ -1,4 +1,4 @@
-package com.example.newuber.home;
+package com.example.logisticsfree.home;
 
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -9,7 +9,7 @@ import android.os.Bundle;
 import android.view.MenuItem;
 import android.widget.FrameLayout;
 
-import com.example.newuber.R;
+import com.example.logisticsfree.R;
 
 public class home extends AppCompatActivity {
     private BottomNavigationView mMainNav;
@@ -26,41 +26,42 @@ public class home extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
-        mMainFrame=(FrameLayout)findViewById(R.id.main_frame);
-        mMainNav=(BottomNavigationView)findViewById(R.id.main_nav);
+        mMainFrame = findViewById(R.id.main_frame);
+        mMainNav = findViewById(R.id.main_nav);
 
-        historyFragment=new HistoryFragment();
-        rattingFragment=new RattingFragment();
-        settingFragment=new SettingFragment();
-        homeFragment=new HomeFragment();
+        historyFragment = new HistoryFragment();
+        rattingFragment = new RattingFragment();
+        settingFragment = new SettingFragment();
+        homeFragment = new HomeFragment();
 
         mMainNav.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-                switch (menuItem.getItemId()){
-                    case R.id.nav_home:{
+                switch (menuItem.getItemId()) {
+                    case R.id.nav_home: {
                         setFragment(homeFragment);
                         return true;
                     }
-                    case R.id.nav_history:{
+                    case R.id.nav_history: {
                         setFragment(historyFragment);
                         return true;
                     }
-                    case R.id.nav_rating:{
+                    case R.id.nav_rating: {
                         setFragment(rattingFragment);
                         return true;
                     }
-                    case R.id.nav_setting:{
+                    case R.id.nav_setting: {
                         setFragment(settingFragment);
                         return true;
                     }
-                    default:return false;
+                    default:
+                        return false;
                 }
             }
 
             private void setFragment(Fragment fragment) {
-                FragmentTransaction fragmentTransaction=getSupportFragmentManager().beginTransaction();
-                fragmentTransaction.replace(R.id.main_frame,fragment);
+                FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+                fragmentTransaction.replace(R.id.main_frame, fragment);
                 fragmentTransaction.commit();
             }
         });

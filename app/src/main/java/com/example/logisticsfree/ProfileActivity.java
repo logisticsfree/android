@@ -1,4 +1,4 @@
-package com.example.newuber;
+package com.example.logisticsfree;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;

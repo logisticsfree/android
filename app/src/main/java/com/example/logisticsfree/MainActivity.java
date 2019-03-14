@@ -1,4 +1,4 @@
-package com.example.newuber;
+package com.example.logisticsfree;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -12,8 +12,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
-import com.example.newuber.home.home;
-import com.example.newuber.signup.SignupActivity;
+import com.example.logisticsfree.home.home;
+import com.example.logisticsfree.signup.SignupActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
