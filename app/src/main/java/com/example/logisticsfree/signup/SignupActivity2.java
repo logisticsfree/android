@@ -1,4 +1,4 @@
-package com.example.newuber.signup;
+package com.example.logisticsfree.signup;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -8,7 +8,7 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
 
-import com.example.newuber.R;
+import com.example.logisticsfree.R;
 
 public class SignupActivity2 extends AppCompatActivity {
     public static Activity selfActivity;

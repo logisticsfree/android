@@ -1,4 +1,4 @@
-package com.example.newuber.signup;
+package com.example.logisticsfree.signup;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -17,10 +17,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.example.newuber.LoginActivity;
-import com.example.newuber.MainActivity;
-import com.example.newuber.R;
-import com.example.newuber.models.User;
+import com.example.logisticsfree.LoginActivity;
+import com.example.logisticsfree.MainActivity;
+import com.example.logisticsfree.R;
+import com.example.logisticsfree.models.User;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;

@@ -1,4 +1,4 @@
-package com.example.newuber.models;
+package com.example.logisticsfree.models;
 
 import java.util.HashMap;
 

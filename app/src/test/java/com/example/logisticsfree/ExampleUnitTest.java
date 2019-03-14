@@ -1,4 +1,4 @@
-package com.example.newuber;
+package com.example.logisticsfree;
 
 import org.junit.Test;
 
