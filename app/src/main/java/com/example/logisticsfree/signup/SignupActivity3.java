@@ -51,7 +51,7 @@ public class SignupActivity3 extends AppCompatActivity {
         fname = getIntent().getStringExtra("fname");
         lname = getIntent().getStringExtra("lname");
 
-        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+//        FirebaseAuth mAuth = FirebaseAuth.getInstance();
         mDatabase = FirebaseFirestore.getInstance();
 
         mSignupView = findViewById(R.id.signup_form);
@@ -157,23 +157,23 @@ public class SignupActivity3 extends AppCompatActivity {
     }
 
     private void saveUser(FirebaseUser mUser) {
-        User newUser = new User(fname, lname, phone, true, null, true);
+        User newUser = new User(fname, lname, phone, true, null, true, false);
 //        mUserRef.child(mUser.getUid()).setValue(newUser);
-        mDatabase.collection("users").document(mUser.getUid())
+        mDatabase.collection("drivers").document(mUser.getUid())
                 .set(newUser)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
                         showProgress(false);
 
-                        Log.d(TAG, "DocumentSnapshot successfully written!");
+                        Log.d(TAG, "new User doc successfully written!");
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
                         showProgress(false);
-                        Log.w(TAG, "Error writing document", e);
+                        Log.w(TAG, "Error writing new user document", e);
                     }
                 });
     }

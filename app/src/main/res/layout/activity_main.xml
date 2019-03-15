@@ -33,26 +33,27 @@
         android:layout_height="match_parent">
 
         <Button
-            android:id="@+id/btn_login"
+            android:id="@+id/btn_show_instructions"
             android:layout_width="230dp"
-            android:layout_height="43dp"
+            android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
             android:layout_marginBottom="8dp"
-            android:background="@drawable/yellowloginbutton"
-            android:onClick="gotoSignin"
-            android:text="@string/btn_login"
-            android:textColor="#fff"
-            android:textSize="20sp"
+            android:onClick="showDialog"
             android:textStyle="bold"
+            android:textSize="20sp"
+            android:textColor="#fff"
+            android:text="@string/btn_show_instructions"
             android:textAllCaps="false"
-            app:layout_constraintBottom_toBottomOf="parent"
+            android:background="@drawable/yellowloginbutton"
+            android:visibility="gone"
+            app:layout_constraintBottom_toTopOf="@+id/btn_profile"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.496"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.816" />
+            app:layout_constraintTop_toTopOf="parent" />
+
+
 
         <Button
             android:id="@+id/btn_logout"
@@ -102,6 +103,28 @@
             app:layout_constraintHorizontal_bias="0.501"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/btn_logout" />
+
+        <Button
+            android:id="@+id/btn_login"
+            android:layout_width="230dp"
+            android:layout_height="43dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:background="@drawable/yellowloginbutton"
+            android:onClick="gotoSignin"
+            android:text="@string/btn_login"
+            android:textColor="#fff"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textAllCaps="false"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.496"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.816" />
 
         <Button
             android:id="@+id/btn_joinus"

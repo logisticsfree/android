@@ -28,7 +28,6 @@ public class home extends AppCompatActivity {
 
         mMainFrame = findViewById(R.id.main_frame);
         mMainNav = findViewById(R.id.main_nav);
-
         historyFragment = new HistoryFragment();
         rattingFragment = new RattingFragment();
         settingFragment = new SettingFragment();
@@ -65,5 +64,8 @@ public class home extends AppCompatActivity {
                 fragmentTransaction.commit();
             }
         });
+
+        mMainNav.setSelectedItemId(R.id.nav_home);
+
     }
 }
