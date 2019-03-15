@@ -4,18 +4,28 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.CardView;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 
 import com.example.logisticsfree.home.home;
 import com.example.logisticsfree.signup.SignupActivity;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 public class MainActivity extends AppCompatActivity {
     private final String TAG = "MainActivity";
@@ -27,10 +37,11 @@ public class MainActivity extends AppCompatActivity {
     private View MainViewProgress;
 
     private Button joinUsButton;
+    private Button loginButton;
+    private Button showInstructionsButton;
 
     // not necessary
     private static final int REQUEST_GET_FIREBASE_AUTH = 0;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,14 +53,33 @@ public class MainActivity extends AppCompatActivity {
         joinUsButton = findViewById(R.id.btn_joinus);
         MainView = findViewById(R.id.main_view);
         MainViewProgress = findViewById(R.id.main_view_progress);
+        loginButton = findViewById(R.id.btn_login);
+        showInstructionsButton = findViewById(R.id.btn_show_instructions);
 
-        showProgress(true);
         mAuth = FirebaseAuth.getInstance();
         mUser = mAuth.getCurrentUser();
-        showProgress(false);
+        FirebaseFirestore mDatabase = FirebaseFirestore.getInstance();
 
-        if (mUser != null) joinUsButton.setVisibility(View.GONE);
+        if (mUser != null) {
+            joinUsButton.setVisibility(View.GONE);
+            loginButton.setVisibility(View.GONE);
 
+            showProgress(true);
+            mDatabase.collection("drivers").document(mUser.getUid()).get()
+                    .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+//                            Log.d(TAG, task.getResult().getBoolean("enabled") + " !");
+                            if (task.getResult().getBoolean("enabled")) {
+                                startActivity(new Intent(MainActivity.this, home.class));
+                                finish();
+                            } else {
+                                showInstructionsButton.setVisibility(View.VISIBLE);
+                            }
+                            showProgress(false);
+                        }
+                    });
+        }
     }
 
     public void gotoSignup(View view) {
@@ -113,5 +143,25 @@ public class MainActivity extends AppCompatActivity {
     public void gotoHome(View view) {
         //Toast.makeText(selfActivity, "you clicked", Toast.LENGTH_SHORT).show();
         startActivity(new Intent(this, home.class));
+    }
+
+    public void showDialog(View view) {
+        Log.d(TAG, "showDialog");
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+        dialog.setTitle("Disabled");
+        dialog.setMessage(R.string.msg_disabled);
+
+        LayoutInflater inflater = LayoutInflater.from(this);
+        View disabled_layout = inflater.inflate(R.layout.layout_disabled, null);
+
+        dialog.setView(disabled_layout);
+
+        dialog.setNeutralButton("Dismiss", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        dialog.show();
     }
 }
