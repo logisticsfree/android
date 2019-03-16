@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!--<color name="colorPrimary">#008577</color>-->
-    <color name="colorPrimary">#3f4451</color>
+    <color name="colorPrimary">#41444A</color>
     <color name="colorPrimaryDark">#00574B</color>
     <!--<color name="colorAccent">#D81B60</color>-->
     <color name="colorAccent">#f8ae3c</color>
@@ -12,7 +12,7 @@
     <color name="darkGrayNormal">#272525</color>
     <color name="darkGrayOnFocus">#0F0E0E</color>
 
-    <color name="colorMaterialGray">#3f4451</color>
+    <color name="colorMaterialGray">#3F4451</color>
     <color name="colorWhiteTransparent">#80ffffff</color>
 
 </resources>
