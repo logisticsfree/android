@@ -7,7 +7,15 @@
 
     <TextView
         android:id="@+id/textView7"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Setting" />
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:gravity="center"
+        android:text="Setting"
+        android:textSize="24sp" />
+
+    <ListView
+        android:id="@+id/mainSetting"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="60dp" />
 </FrameLayout>
