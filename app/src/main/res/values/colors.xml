@@ -4,7 +4,7 @@
     <color name="colorPrimary">#41444A</color>
     <color name="colorPrimaryDark">#00574B</color>
     <!--<color name="colorAccent">#D81B60</color>-->
-    <color name="colorAccent">#f8ae3c</color>
+    <color name="colorAccent">#F8AE3C</color>
 
     <color name="yellowNormal">#f8ae3c</color>
     <color name="yellowOnFocus">#AF8324</color>
