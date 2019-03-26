@@ -51,4 +51,8 @@
     <string name="detaills">Detaills</string>
     <string name="ratingBar">Rating</string>
     <string name="todo">TODO</string>
+    <string name="currently_you_don_t_have_a_trip">Currently You Don\'t Have A Trip!</string>
+    <string name="topHome">Home</string>
+    <string name="togglebutton">ToggleButton</string>
+    <string name="profile">Profile</string>
 </resources>

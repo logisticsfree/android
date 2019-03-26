@@ -11,6 +11,8 @@ public class ProfileActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private FirebaseUser mUser;
     private TextView nameBox;
+    private TextView nameView;
+    private TextView numberView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -20,9 +22,13 @@ public class ProfileActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         mUser = mAuth.getCurrentUser();
         nameBox = findViewById(R.id.nameBox);
+        nameView=findViewById(R.id.nameView);
+        numberView=findViewById(R.id.numberView);
 
         if (mUser == null) finish();
 
-        nameBox.setText(mUser.getEmail());
+        nameBox.setText("Email: "+mUser.getEmail());
+        nameView.setText("Name: ");
+        numberView.setText("Mobile Number: ");
     }
 }
