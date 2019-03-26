@@ -5,6 +5,15 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".home.home">
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/my_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/colorAccent"
+        android:elevation="4dp"
+        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
 
     <android.support.design.widget.BottomNavigationView
         android:id="@+id/main_nav"
@@ -15,7 +24,7 @@
         android:background="@color/colorPrimary"
         app:itemIconTint="@color/nav_item_colors"
         app:itemTextColor="@color/nav_item_colors"
-        app:menu="@menu/nav_items"></android.support.design.widget.BottomNavigationView>
+        app:menu="@menu/nav_items" />
 
     <FrameLayout
         android:id="@+id/main_frame"

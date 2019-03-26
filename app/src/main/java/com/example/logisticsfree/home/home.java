@@ -6,12 +6,17 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.FrameLayout;
 
 import com.example.logisticsfree.R;
 
 public class home extends AppCompatActivity {
+    private final String TAG = "HomeAcivity";
     private BottomNavigationView mMainNav;
     private FrameLayout mMainFrame;
 
@@ -25,6 +30,9 @@ public class home extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+
+        Toolbar myToolbar = findViewById(R.id.my_toolbar);
+        setSupportActionBar(myToolbar);
 
         mMainFrame = findViewById(R.id.main_frame);
         mMainNav = findViewById(R.id.main_nav);
@@ -67,5 +75,19 @@ public class home extends AppCompatActivity {
 
         mMainNav.setSelectedItemId(R.id.nav_home);
 
+    }
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_actionbar, menu);
+        return true;
+    }
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_set_availability:
+                Log.d(TAG, "onOptionsItemsSelected: asdfasfd");
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 }

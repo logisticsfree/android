@@ -55,4 +55,5 @@
     <string name="topHome">Home</string>
     <string name="togglebutton">ToggleButton</string>
     <string name="profile">Profile</string>
+    <string name="action_set_availability">Online</string>
 </resources>
