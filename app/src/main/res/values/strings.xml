@@ -56,4 +56,5 @@
     <string name="togglebutton">ToggleButton</string>
     <string name="profile">Profile</string>
     <string name="action_set_availability">Online</string>
+    <string name="tracking_enabled_notif">Tracking is currently enabled. Tap to cancel.</string>
 </resources>
