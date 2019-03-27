@@ -2,9 +2,10 @@
 <menu xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <item android:title="@string/action_set_availability"
+    <item android:title=""
         android:id="@+id/action_set_availability"
-        android:icon="@drawable/ic_action_available"
-        app:showAsAction="ifRoom"
+        app:showAsAction="always"
+        app:actionLayout="@layout/appbar_switch_layout"
+
         />
 </menu>
