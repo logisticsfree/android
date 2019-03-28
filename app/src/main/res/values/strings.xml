@@ -31,12 +31,13 @@
 
     <string name="new_account">Get\nStarted</string>
     <string name="reset_password">Reset\nPassword</string>
-    <string name="label_step1of3">1/3</string>
-    <string name="label_step2of3">2/3</string>
-    <string name="label_step3of3">3/3</string>
+    <string name="label_step1of4">1/4</string>
+    <string name="label_step2of4">2/4</string>
+    <string name="label_step3of4">3/4</string>
+    <string name="label_step4of4">4/4</string>
     <string name="label_steps">STEPS</string>
     <string name="btn_next">Next</string>
-  
+
     <string name="nav_home">Home</string>
     <string name="nav_history">History</string>
     <string name="nav_rating">Rating</string>
@@ -57,4 +58,7 @@
     <string name="profile">Profile</string>
     <string name="action_set_availability">Online</string>
     <string name="tracking_enabled_notif">Tracking is currently enabled. Tap to cancel.</string>
+    <string name="prompt_vehicle_no">Vehicle No</string>
+    <string name="prompt_vehicle_volume">Vehicle Volume Capacity</string>
+    <string name="prompt_truck_weight">Vehicle Weight Capacity</string>
 </resources>
