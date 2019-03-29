@@ -132,7 +132,7 @@
                         android:imeOptions="actionNext"
                         android:inputType="text"
                         android:maxLines="1"
-                        android:nextFocusDown="@id/signup_password"
+                        android:nextFocusDown="@id/signup_truck_volume"
                         android:singleLine="true"
                         android:textColor="#f8ae3c"
                         android:textColorHint="#f8ae3c" />
@@ -160,9 +160,9 @@
                         android:layout_height="wrap_content"
                         android:hint="@string/prompt_vehicle_volume"
                         android:imeOptions="actionNext"
-                        android:inputType="number|text"
+                        android:inputType="numberDecimal"
                         android:maxLines="1"
-                        android:nextFocusDown="@id/signup_truck_volume"
+                        android:nextFocusDown="@id/signup_truck_weight"
                         android:singleLine="true"
                         android:textColor="#f8ae3c"
                         android:textColorHint="#f8ae3c" />
@@ -193,11 +193,12 @@
                         android:layout_height="wrap_content"
                         android:hint="@string/prompt_truck_weight"
                         android:imeOptions="actionDone"
-                        android:inputType="number|text"
+                        android:nextFocusDown="@id/signup_truck_type"
+                        android:inputType="numberDecimal"
                         android:maxLines="1"
                         android:singleLine="true"
-                        android:textColor="#f8ae3c"
-                        android:textColorHint="#f8ae3c" />
+                        android:textColor="@color/yellowNormal"
+                        android:textColorHint="@color/yellowNormal" />
 
                 </android.support.design.widget.TextInputLayout>
 
@@ -208,7 +209,7 @@
                     android:layout_marginStart="8dp"
                     android:layout_marginTop="8dp"
                     android:layout_marginEnd="8dp"
-                    android:layout_marginBottom="100dp"
+                    android:layout_marginBottom="50dp"
                     android:textColorHint="@color/yellowNormal"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -217,16 +218,19 @@
                     app:layout_constraintTop_toBottomOf="@+id/textInputLayout"
                     app:layout_constraintVertical_bias="0.417"
                     app:passwordToggleEnabled="true">
-
-                    <Switch
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:text="@string/prompt_truck_type"
+                        android:textColor="@color/yellowNormal"
+                        android:layout_height="wrap_content"/>
+                    <Spinner
                         android:id="@+id/signup_truck_type"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:hint="@string/prompt_truck_weight"
-                        android:maxLines="1"
-                        android:singleLine="true"
-                        android:textColor="#f8ae3c"
-                        android:textColorHint="#f8ae3c" />
+                        android:layout_height="60dp"
+                        android:hint="@string/prompt_truck_type"
+                        android:entries="@array/truck_types"
+                        android:prompt="@string/prompt_truck_type"
+                        android:spinnerMode="dropdown"/>
 
                 </android.support.design.widget.TextInputLayout>
 
@@ -243,6 +247,7 @@
                     android:textColor="#fff"
                     android:textSize="25sp"
                     android:textStyle="bold"
+                    android:onClick="gotoSignup3"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.0"
@@ -253,5 +258,6 @@
             </LinearLayout>
         </LinearLayout>
     </ScrollView>
+
 </LinearLayout>
 

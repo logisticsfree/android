@@ -61,4 +61,12 @@
     <string name="prompt_vehicle_no">Vehicle No</string>
     <string name="prompt_vehicle_volume">Vehicle Volume Capacity</string>
     <string name="prompt_truck_weight">Vehicle Weight Capacity</string>
+    <string name="prompt_truck_type">Vehicle Type</string>
+    <string name="menu_title_setting">Setting</string>
+
+    <string-array name="truck_types">
+        <item>Non A/C</item>
+        <item>A/C</item>
+    </string-array>
+
 </resources>

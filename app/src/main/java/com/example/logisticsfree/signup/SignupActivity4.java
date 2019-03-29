@@ -20,6 +20,7 @@ import android.widget.Toast;
 import com.example.logisticsfree.LoginActivity;
 import com.example.logisticsfree.MainActivity;
 import com.example.logisticsfree.R;
+import com.example.logisticsfree.models.Truck;
 import com.example.logisticsfree.models.User;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -39,7 +40,8 @@ public class SignupActivity4 extends AppCompatActivity {
     private View mProgressView;
     private EditText mEmail;
     private EditText mPassword;
-    private String phone, fname, lname;
+    private String phone, fname, lname, truckNo, truckType;
+    private double truckVolume, truckWeight;
     FirebaseFirestore mDatabase;
 
 
@@ -50,6 +52,10 @@ public class SignupActivity4 extends AppCompatActivity {
         phone = getIntent().getStringExtra("phone");
         fname = getIntent().getStringExtra("fname");
         lname = getIntent().getStringExtra("lname");
+        truckNo = getIntent().getStringExtra("truckNo");
+        truckVolume = getIntent().getDoubleExtra("truckVolume", 0);
+        truckWeight = getIntent().getDoubleExtra("truckWeight", 0);
+        truckType = getIntent().getStringExtra("truckType");
 
 //        FirebaseAuth mAuth = FirebaseAuth.getInstance();
         mDatabase = FirebaseFirestore.getInstance();
@@ -69,12 +75,12 @@ public class SignupActivity4 extends AppCompatActivity {
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                attamptSignup();
+                attemptSighup();
             }
         });
     }
 
-    private void attamptSignup() {
+    private void attemptSighup() {
 
         final FirebaseAuth mAuth = FirebaseAuth.getInstance();
 
@@ -148,6 +154,7 @@ public class SignupActivity4 extends AppCompatActivity {
 
                                 SignupActivity.selfActivity.finish();
                                 SignupActivity2.selfActivity.finish();
+                                SignupActivity3.selfActivity.finish();
                                 MainActivity.selfActivity.finish();
                                 finish();
                             }
@@ -157,7 +164,8 @@ public class SignupActivity4 extends AppCompatActivity {
     }
 
     private void saveUser(FirebaseUser mUser) {
-        User newUser = new User(fname, lname, phone, true, null, true, false);
+        Truck newTruck = new Truck(truckNo, truckVolume, truckWeight, truckType);
+        User newUser = new User(fname, lname, phone, true, null, true, false, newTruck);
 //        mUserRef.child(mUser.getUid()).setValue(newUser);
         mDatabase.collection("drivers").document(mUser.getUid())
                 .set(newUser)

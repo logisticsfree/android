@@ -109,6 +109,7 @@ public class MainActivity extends AppCompatActivity {
             joinUsButton.setVisibility(View.VISIBLE);
             mUser = null;
         }
+        startActivity(new Intent(this, MainActivity.class));
     }
 
     /**
