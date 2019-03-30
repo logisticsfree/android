@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-
+    android:layout_marginTop="?attr/actionBarSize"
+    android:layout_marginBottom="56dp"
     tools:context=".home.HomeFragment">
 
-    <!-- TODO: Update blank fragment layout -->
     <TextView
         android:id="@+id/homeTopBar"
         android:layout_width="match_parent"
@@ -16,10 +16,8 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
-        android:layout_marginStart="0dp"
         android:layout_marginTop="0dp"
-        android:layout_marginEnd="0dp"
-        android:layout_marginBottom="683dp"
+        android:layout_marginBottom="0dp"
         android:background="@color/colorPrimary"
         android:gravity="center"
         android:text="@string/topHome"
@@ -102,4 +100,4 @@
 -->
 
 
-</RelativeLayout>
+</android.support.constraint.ConstraintLayout>

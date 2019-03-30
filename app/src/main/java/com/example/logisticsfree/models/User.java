@@ -10,10 +10,11 @@ public class User {
     private HashMap<String, Object> location;
     private boolean availability;
     private boolean enabled;
+    private Truck truck;
 
     public User() {}
 
-    public User(String fName, String lName, String phone, boolean onlineStatus, HashMap<String, Object> location, boolean availability, boolean enabled) {
+    public User(String fName, String lName, String phone, boolean onlineStatus, HashMap<String, Object> location, boolean availability, boolean enabled, Truck truck) {
         this.fName = fName;
         this.lName = lName;
         this.phone = phone;
@@ -21,6 +22,7 @@ public class User {
         this.location = location;
         this.availability = availability;
         this.enabled = enabled;
+        this.truck = truck;
     }
 
     public String getfName() {
@@ -77,5 +79,13 @@ public class User {
 
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
+    }
+
+    public Truck getTruck() {
+        return truck;
+    }
+
+    public void setTruck(Truck truck) {
+        this.truck = truck;
     }
 }

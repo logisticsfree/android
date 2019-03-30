@@ -11,7 +11,7 @@
         android:layout_height="40dp"
         android:background="@color/colorMaterialGray"
         android:gravity="center"
-        android:text="Setting"
+        android:text="@string/menu_title_setting"
         android:textColor="@color/colorAccent"
         android:textSize="18sp" />
 
