@@ -30,6 +30,7 @@ public class HomeFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
 
+        
         return inflater.inflate(R.layout.fragment_home, container, false);
     }
 }
