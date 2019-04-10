@@ -8,96 +8,17 @@
     android:layout_marginBottom="56dp"
     tools:context=".home.HomeFragment">
 
-    <TextView
-        android:id="@+id/homeTopBar"
-        android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginTop="0dp"
-        android:layout_marginBottom="0dp"
-        android:background="@color/colorPrimary"
-        android:gravity="center"
-        android:text="@string/topHome"
-        android:textColor="@color/colorAccent"
-        android:textSize="18sp"
+    <Button
+        android:id="@+id/button4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:text="New Trip"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0" />
-
-
-    <!--
-    <android.support.v4.widget.NestedScrollView
-        android:id="@+id/bottom_sheet"
-        android:layout_width="match_parent"
-        android:layout_height="235dp"
-       android:background="@color/common_google_signin_btn_text_dark_focused"
-        app:behavior_hideable="true"
-        app:behavior_peekHeight="35dp"
-        app:layout_behavior="@string/bottom_sheet_behavior">
-        <android.support.v7.widget.LinearLayoutCompat
-            android:orientation="vertical"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <android.support.v7.widget.CardView
-
-                xmlns:card_view="http://schemas.android.com/apk/res-auto"
-                android:layout_width="match_parent"
-                android:layout_margin="5dp"
-                card_view:cardCornerRadius="5dp"
-                android:layout_height="25dp"
-                >
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center"
-                    android:text="Details"
-                    android:textColor="@color/colorAccent"
-                    android:background="@color/common_google_signin_btn_text_dark_focused"/>
-
-            </android.support.v7.widget.CardView>
-            <android.support.v7.widget.CardView
-
-                xmlns:card_view="http://schemas.android.com/apk/res-auto"
-                android:layout_width="match_parent"
-                android:layout_margin="5dp"
-                card_view:cardCornerRadius="5dp"
-                android:layout_height="40dp">
-                <android.support.v7.widget.LinearLayoutCompat
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
-                    <android.support.v7.widget.CardView
-                        android:layout_width="150dp"
-                        android:layout_height="match_parent">
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:textColor="@color/colorAccent"
-                            android:text="Contact Number"/>
-                    </android.support.v7.widget.CardView>
-                    <android.support.v7.widget.CardView
-                        android:layout_width="150dp"
-                        android:layout_height="match_parent"
-                        >
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:textColor="@color/colorAccent"
-                            android:text="07723565898"/>
-                    </android.support.v7.widget.CardView>
-                </android.support.v7.widget.LinearLayoutCompat>
-            </android.support.v7.widget.CardView>
-        </android.support.v7.widget.LinearLayoutCompat>
-
-
-    </android.support.v4.widget.NestedScrollView>
--->
-
-
+        app:layout_constraintTop_toTopOf="parent" />
 </android.support.constraint.ConstraintLayout>

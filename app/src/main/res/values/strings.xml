@@ -64,6 +64,7 @@
     <string name="prompt_truck_type">Vehicle Type</string>
     <string name="menu_title_setting">Setting</string>
 
+
     <string-array name="truck_types">
         <item>Non A/C</item>
         <item>A/C</item>
