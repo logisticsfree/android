@@ -33,10 +33,14 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.logisticsfree.models.Token;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -206,12 +210,35 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
                                 Log.e(TAG, "Auth Failed: " + task.getException());
                             } else {
+                                FirebaseInstanceId.getInstance().getInstanceId()
+                                        .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<InstanceIdResult> task) {
+                                                if (!task.isSuccessful()) {
+                                                    Log.w(TAG, "getInstanceId failed", task.getException());
+                                                    return;
+                                                }
+
+                                                // Get new Instance ID token
+                                                String token = task.getResult().getToken();
+                                                updateTokenToServer(token);
+                                            }
+                                        });
+
                                 Toast.makeText(LoginActivity.this, "Signup successful!", Toast.LENGTH_LONG).show();
                                 setResult(Activity.RESULT_OK, new Intent().putExtra("success", true));
                                 finish();
                             }
                         }
                     });
+        }
+    }
+    private void updateTokenToServer(String refreshedToken) {
+        FirebaseFirestore mDatabase = FirebaseFirestore.getInstance();
+
+        Token token = new Token(refreshedToken);
+        if(FirebaseAuth.getInstance().getCurrentUser()!= null){
+            mDatabase.collection("tokens").document(FirebaseAuth.getInstance().getCurrentUser().getUid()).set(token);
         }
     }
 

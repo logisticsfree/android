@@ -23,6 +23,14 @@
             android:enabled="true"
             android:exported="true" />
 
+        <service
+            android:name=".services.FirebaseMsgService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+            </intent-filter>
+        </service>
+
         <activity android:name=".ResetPasswordActivity" />
         <activity android:name=".home.home" />
         <activity android:name=".signup.SignupActivity3" />

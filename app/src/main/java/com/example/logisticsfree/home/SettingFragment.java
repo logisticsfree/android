@@ -2,16 +2,20 @@ package com.example.logisticsfree.home;
 
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 
+import com.example.logisticsfree.MainActivity;
 import com.example.logisticsfree.ProfileActivity;
 import com.example.logisticsfree.R;
 import com.google.firebase.auth.FirebaseAuth;
@@ -32,21 +36,28 @@ public class SettingFragment extends Fragment {
         // Required empty public constructor
         mAuth = FirebaseAuth.getInstance();
         mUser = mAuth.getCurrentUser();
-    }
 
+    }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_setting, container, false);
-        String[] settingItem = {"Profile", "Manage Profile", "Vehical", "Signout"};
+        final String[] settingItem = {"Profile", "Manage Profile", "Vehical", "Signout"};
         ListView listView = (ListView) view.findViewById(R.id.mainSetting);
         ArrayAdapter<String> listViewAdapter = new ArrayAdapter<String>(
                 getActivity(),
                 android.R.layout.simple_list_item_1,
                 settingItem
-        );
+        ) {
+            @Override
+            public View getDropDownView(int position, View convertView,  ViewGroup parent) {
+                View view = super.getDropDownView(position, convertView, parent);
+                Log.d(TAG, "getDropDownView: " + position);
+                return view;
+            }
+        };
         listView.setAdapter(listViewAdapter);
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -70,10 +81,14 @@ public class SettingFragment extends Fragment {
                     if (mUser != null) {
                         mAuth.signOut();
                         mUser = null;
+
+                        startActivity(new Intent(getActivity(), MainActivity.class));
+                        getActivity().finish();
                     }
                 }
             }
         });
+
         return view;
     }
 
