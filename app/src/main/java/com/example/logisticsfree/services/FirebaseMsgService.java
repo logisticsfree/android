@@ -1,7 +1,9 @@
 package com.example.logisticsfree.services;
 
+import android.content.Intent;
 import android.util.Log;
 
+import com.example.logisticsfree.CustomerCall;
 import com.example.logisticsfree.models.Token;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -39,13 +41,13 @@ public class FirebaseMsgService extends FirebaseMessagingService {
             String lng = data.get("lng");
             System.out.println("Debug lat" + lat + "lng" + lng);
 
-//            Intent intent = new Intent(getBaseContext(), CustommerCall.class);
-//            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//            intent.putExtra("lat", lat);
-//            intent.putExtra("lng", lng);
-//            intent.putExtra("customer", customer);
-//
-//            startActivity(intent);
+            Intent intent = new Intent(getBaseContext(), CustomerCall.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.putExtra("lat", lat);
+            intent.putExtra("lng", lng);
+            intent.putExtra("customer", customer);
+
+            startActivity(intent);
             Log.d(TAG, "onMessageReceived: " + lat + " " + lng);
         }
     }
