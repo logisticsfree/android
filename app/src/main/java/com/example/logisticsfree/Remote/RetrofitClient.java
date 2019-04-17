@@ -1,4 +1,4 @@
-package com.example.logisticsfree.services;
+package com.example.logisticsfree.Remote;
 
 import retrofit2.Retrofit;
 import retrofit2.converter.scalars.ScalarsConverterFactory;

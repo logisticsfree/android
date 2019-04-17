@@ -6,7 +6,7 @@ import com.example.logisticsfree.Remote.FCMClient;
 import com.example.logisticsfree.Remote.IFCMService;
 import com.example.logisticsfree.Remote.IGoogleAPI;
 import com.example.logisticsfree.models.User;
-import com.example.logisticsfree.services.RetrofitClient;
+import com.example.logisticsfree.Remote.RetrofitClient;
 
 public class Common {
 

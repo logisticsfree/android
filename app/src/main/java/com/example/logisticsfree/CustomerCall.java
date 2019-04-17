@@ -3,6 +3,7 @@ package com.example.logisticsfree;
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
@@ -14,14 +15,29 @@ import android.widget.Toast;
 import com.example.logisticsfree.Common.Common;
 import com.example.logisticsfree.Remote.IFCMService;
 import com.example.logisticsfree.Remote.IGoogleAPI;
-import com.example.logisticsfree.models.FCMResponse;
 import com.example.logisticsfree.models.Token;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldPath;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.SetOptions;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 
 import retrofit2.Call;
@@ -29,6 +45,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class CustomerCall extends AppCompatActivity {
+    private final String TAG = "CustomerCall";
 
     TextView txtTime, txtAddress, txtDistance;
     MediaPlayer mediaPlayer;
@@ -70,6 +87,7 @@ public class CustomerCall extends AppCompatActivity {
                 intent.putExtra("lat", lat);
                 intent.putExtra("lng", lng);
                 intent.putExtra("customerId", customerId);
+                moveRequestToOrder(customerId);
                 startActivity(intent);
                 finish();
             }
@@ -82,10 +100,69 @@ public class CustomerCall extends AppCompatActivity {
         if (getIntent() != null) {
             lat = Double.parseDouble(getIntent().getStringExtra("lat"));
             lng = Double.parseDouble(getIntent().getStringExtra("lng"));
-            customerId = getIntent().getStringExtra("customer");
+            customerId = getIntent().getStringExtra("customerId");
+            System.out.println("CustomerID : " + customerId);
 
             getDirection(lat, lng);
         }
+    }
+
+    private void moveRequestToOrder(String customerID) {
+        FirebaseFirestore fs = FirebaseFirestore.getInstance();
+        FirebaseUser mUser = FirebaseAuth.getInstance().getCurrentUser();
+        DocumentReference requestPath = fs.document("order-requests/" + customerID + "/order-requests/" + mUser.getUid());
+        DocumentReference orderPath = fs.document("ordered-trucks/" + customerID);
+
+        moveFirestoreDocument(requestPath, orderPath);
+    }
+
+    public void moveFirestoreDocument(final DocumentReference fromPath, final DocumentReference toPath) {
+        System.out.println(fromPath.getPath() + " " + toPath.getPath());
+        fromPath.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (document != null) {
+
+                        Map<String, Object> data = new HashMap<>();
+                        String vid = ((Map<String, Object>)((Map<String, Object>)document.getData().get("truck")).get("truck")).get("vid").toString();
+                        data.put(vid, document.getData());
+
+                        toPath.set(data, SetOptions.merge())
+                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void aVoid) {
+                                        Log.d(TAG, "DocumentSnapshot successfully written!");
+                                        fromPath.delete()
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Log.d(TAG, "DocumentSnapshot successfully deleted!");
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w(TAG, "Error deleting document", e);
+                                                    }
+                                                });
+                                    }
+                                })
+                                .addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        Log.w(TAG, "Error writing document", e);
+                                    }
+                                });
+                    } else {
+                        Log.d(TAG, "No such document");
+                    }
+                } else {
+                    Log.d(TAG, "get failed with ", task.getException());
+                }
+            }
+        });
     }
 
     private void cancelBooking(String customerId) {
@@ -118,7 +195,7 @@ public class CustomerCall extends AppCompatActivity {
 
     private void getDirection(double lat, double lng) {
         System.out.println("Debug1 " + lat + "," + lng);
-        String requestApi = null;
+        String requestApi;
         try {
             requestApi = "https://maps.googleapis.com/maps/api/directions/json?" +
                     "mode=driving&" +

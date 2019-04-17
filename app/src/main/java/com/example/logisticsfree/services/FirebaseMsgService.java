@@ -36,7 +36,7 @@ public class FirebaseMsgService extends FirebaseMessagingService {
 
         if (remoteMessage.getData() != null) {
             Map<String, String> data = remoteMessage.getData();
-            String customer = data.get("customer");
+            String customerId = data.get("customerId");
             String lat = data.get("lat");
             String lng = data.get("lng");
             System.out.println("Debug lat" + lat + "lng" + lng);
@@ -45,7 +45,8 @@ public class FirebaseMsgService extends FirebaseMessagingService {
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             intent.putExtra("lat", lat);
             intent.putExtra("lng", lng);
-            intent.putExtra("customer", customer);
+            intent.putExtra("customerId", customerId);
+            System.out.println("CustomerID: : " + customerId);
 
             startActivity(intent);
             Log.d(TAG, "onMessageReceived: " + lat + " " + lng);

@@ -14,6 +14,7 @@ import android.os.IBinder;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
+import com.example.logisticsfree.Common.Common;
 import com.example.logisticsfree.R;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -72,6 +73,8 @@ public class TrackingService extends Service {
                 GeoFirestore geoFirestore = new GeoFirestore(geoFirestoreRef);
                 Location location = locationResult.getLastLocation();
                 if (location != null) {
+                    Common.mLastLocation = location;
+
                     geoFirestore.setLocation(mUser.getUid(), new GeoPoint(location.getLatitude(), location.getLongitude()),
                             new GeoFirestore.CompletionListener() {
                                 @Override
