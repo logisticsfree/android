@@ -1,6 +1,7 @@
 package com.example.logisticsfree.home;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.LocationManager;
@@ -25,6 +26,13 @@ import android.widget.Toast;
 import com.example.logisticsfree.R;
 import com.example.logisticsfree.models.Token;
 import com.example.logisticsfree.services.TrackingService;
+//<<<<<<< HEAD
+import com.google.android.gms.location.FusedLocationProviderClient;
+
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+//=======
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -32,6 +40,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
+//>>>>>>> 66ffb254aecbef6cad2c812bb26f2d56b452136f
 
 public class home extends AppCompatActivity {
     private final String TAG = "HomeAcivity";
@@ -47,6 +56,9 @@ public class home extends AppCompatActivity {
     private HomeFragment homeFragment;
 
     private static final int PERMISSIONS_REQUEST = 100;
+
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
