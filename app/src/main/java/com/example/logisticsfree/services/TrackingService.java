@@ -16,22 +16,23 @@ import android.util.Log;
 
 import com.example.logisticsfree.Common.Common;
 import com.example.logisticsfree.R;
-
+import com.firebase.geofire.GeoFire;
+import com.firebase.geofire.GeoLocation;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
+import com.google.firebase.FirebaseError;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.GeoPoint;
 
-import org.imperiumlabs.geofirestore.GeoFirestore;
 
 public class TrackingService extends Service {
     private final String TAG = "TrackingService";
@@ -56,6 +57,7 @@ public class TrackingService extends Service {
         requestLocationUpdates();
 
     }
+
     private void buildLocationCallback() {
         locationCallback = new LocationCallback() {
             @Override
@@ -67,38 +69,26 @@ public class TrackingService extends Service {
                 FirebaseUser mUser = mAuth.getCurrentUser();
                 if (mUser == null) return;
 
-//                    DatabaseReference ref = FirebaseDatabase.getInstance().getReference("path/to/geofire");
-                CollectionReference geoFirestoreRef = FirebaseFirestore.getInstance().collection("driver-location");
+                DatabaseReference ref = FirebaseDatabase.getInstance().getReference("driver-locations");
+                GeoFire geoFire = new GeoFire(ref);
 
-                GeoFirestore geoFirestore = new GeoFirestore(geoFirestoreRef);
                 Location location = locationResult.getLastLocation();
                 if (location != null) {
                     Common.mLastLocation = location;
 
-                    geoFirestore.setLocation(mUser.getUid(), new GeoPoint(location.getLatitude(), location.getLongitude()),
-                            new GeoFirestore.CompletionListener() {
+                    geoFire.setLocation(mUser.getUid(), new GeoLocation(location.getLatitude(), location.getLongitude()),
+                            new GeoFire.CompletionListener() {
                                 @Override
-                                public void onComplete(Exception exception) {
+                                public void onComplete(String key, DatabaseError exception) {
                                     if (exception == null) {
                                         System.out.println("Location saved on server successfully!");
 
                                     } else {
                                         Log.d(TAG, "onComplete: " + exception.getMessage());
-
                                     }
                                 }
                             });
                 }
-
-//
-//                    DatabaseReference ref = FirebaseDatabase.getInstance().getReference("users").child(mUser.getUid()).child("location");
-//                    Location location = locationResult.getLastLocation();
-//                    if (location != null) {
-//
-////Save the location data to the database//
-//
-//                        ref.setValue(location);
-//                    }
             }
         };
     }
@@ -149,38 +139,6 @@ public class TrackingService extends Service {
             stopSelf();
         }
     };
-
-//    private void loginToFirebase() {
-//
-////Authenticate with Firebase, using the email and password we created earlier//
-//
-//        String email = getString(R.string.test_email);
-//        String password = getString(R.string.test_password);
-//
-////Call OnCompleteListener if the user is signed in successfully//
-//
-//        FirebaseAuth.getInstance().signInWithEmailAndPassword(
-//                email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-//            @Override
-//            public void onComplete(Task<AuthResult> task) {
-//
-////If the user has been authenticated...//
-//
-//                if (task.isSuccessful()) {
-//
-////...then call requestLocationUpdates//
-//
-//                    requestLocationUpdates();
-//                } else {
-//
-////If sign in fails, then log the error//
-//
-//                    Log.d(TAG, "Firebase authentication failed");
-//
-//                }
-//            }
-//        });
-//    }
 
     //Initiate the request to track the device's location//
 
