@@ -16,6 +16,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+
+        <activity android:name=".setting.ProfileActivity"></activity>
+        <activity android:name=".setting.VehicleActivity" />
+        <activity android:name=".NewTripActivity" />
         <activity android:name=".DriverTracking"></activity>
         <activity android:name=".CustomerCall" />
         <activity android:name=".signup.SignupActivity4" />
@@ -39,7 +43,6 @@
         <activity
             android:name=".signup.SignupActivity"
             android:label="@string/title_activity_signup" />
-        <activity android:name=".ProfileActivity" />
         <activity
             android:name=".LoginActivity"
             android:label="@string/title_activity_login" />

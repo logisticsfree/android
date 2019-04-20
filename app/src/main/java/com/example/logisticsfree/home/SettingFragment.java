@@ -18,6 +18,7 @@ import android.widget.TextView;
 import com.example.logisticsfree.MainActivity;
 import com.example.logisticsfree.ProfileActivity;
 import com.example.logisticsfree.R;
+import com.example.logisticsfree.setting.ProfileActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -44,7 +45,9 @@ public class SettingFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_setting, container, false);
+
         final String[] settingItem = {"Profile", "Manage Profile", "Vehical", "Signout"};
+
         ListView listView = (ListView) view.findViewById(R.id.mainSetting);
         ArrayAdapter<String> listViewAdapter = new ArrayAdapter<String>(
                 getActivity(),
