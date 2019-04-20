@@ -16,7 +16,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.example.logisticsfree.MainActivity;
-import com.example.logisticsfree.ProfileActivity;
 import com.example.logisticsfree.R;
 import com.example.logisticsfree.setting.ProfileActivity;
 import com.google.firebase.auth.FirebaseAuth;

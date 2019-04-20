@@ -24,20 +24,15 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FieldPath;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreSettings;
 import com.google.firebase.firestore.SetOptions;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
 import java.util.Map;
 
 import retrofit2.Call;
@@ -50,6 +45,8 @@ public class CustomerCall extends AppCompatActivity {
     TextView txtTime, txtAddress, txtDistance;
     MediaPlayer mediaPlayer;
     Button btnCancel, btnAccept;
+    FirebaseFirestore fs;
+    FirebaseUser mUser;
 
     IGoogleAPI mService;
     IFCMService mFCMService;
@@ -61,6 +58,10 @@ public class CustomerCall extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_customer_call);
+
+        fs = FirebaseFirestore.getInstance();
+        mUser = FirebaseAuth.getInstance().getCurrentUser();
+
 
         mService = Common.getGoogleAPI();
         mFCMService = Common.getFCMService();
@@ -108,8 +109,6 @@ public class CustomerCall extends AppCompatActivity {
     }
 
     private void moveRequestToOrder(String customerID) {
-        FirebaseFirestore fs = FirebaseFirestore.getInstance();
-        FirebaseUser mUser = FirebaseAuth.getInstance().getCurrentUser();
         DocumentReference requestPath = fs.document("order-requests/" + customerID + "/order-requests/" + mUser.getUid());
         DocumentReference orderPath = fs.document("ordered-trucks/" + customerID);
 
@@ -126,7 +125,7 @@ public class CustomerCall extends AppCompatActivity {
                     if (document != null) {
 
                         Map<String, Object> data = new HashMap<>();
-                        String vid = ((Map<String, Object>)((Map<String, Object>)document.getData().get("truck")).get("truck")).get("vid").toString();
+                        String vid = document.get("truck.truck.vid").toString();
                         data.put(vid, document.getData());
 
                         toPath.set(data, SetOptions.merge())
@@ -166,14 +165,33 @@ public class CustomerCall extends AppCompatActivity {
     }
 
     private void cancelBooking(String customerId) {
-        Token token = new Token(customerId);
+//        Token token = new Token(customerId);
+        System.out.println("cancel" + customerId);
+
+        DocumentReference requestPath = fs.document("order-requests/" + customerId + "/order-requests/" + mUser.getUid());
+        final DocumentReference driverRef = fs.document("drivers/" + mUser.getUid());
+        requestPath.delete()
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d(TAG, "DocumentSnapshot successfully deleted!");
+                        driverRef.update("available", true);
+                        finish();
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w(TAG, "Error deleting document", e);
+                    }
+                });
 
 //        Notification notification = new Notification("Cancel","Driver has cancelled your request");
 //        Sender sender = new Sender(token.getToken(),notification);
 
-        Map<String, String> content = new HashMap<>();
-        content.put("title", "Cancel");
-        content.put("message", "Driver has cancelled your request");
+//        Map<String, String> content = new HashMap<>();
+//        content.put("title", "Cancel");
+//        content.put("message", "Driver has cancelled your request");
 //        DataMessage dataMessage = new DataMessage(token.getToken(), content);
 //
 //        mFCMService.sendMessage(dataMessage)
