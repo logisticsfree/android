@@ -63,6 +63,7 @@
     <string name="prompt_truck_weight">Vehicle Weight Capacity</string>
     <string name="prompt_truck_type">Vehicle Type</string>
     <string name="menu_title_setting">Setting</string>
+    <string name="google_direction_api">AIzaSyAhgYGsUa7529jFR8yWrnTLjgvyA3T9Xi0</string>
 
 
     <string-array name="truck_types">

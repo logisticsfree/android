@@ -16,15 +16,25 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+
         <activity android:name=".setting.ProfileActivity"></activity>
         <activity android:name=".setting.VehicleActivity" />
         <activity android:name=".NewTripActivity" />
+        <activity android:name=".DriverTracking"></activity>
+        <activity android:name=".CustomerCall" />
         <activity android:name=".signup.SignupActivity4" />
 
         <service
             android:name=".services.TrackingService"
             android:enabled="true"
             android:exported="true" />
+        <service
+            android:name=".services.FirebaseMsgService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
 
         <activity android:name=".ResetPasswordActivity" />
         <activity android:name=".home.home" />
