@@ -15,7 +15,6 @@ import android.widget.Toast;
 import com.example.logisticsfree.Common.Common;
 import com.example.logisticsfree.Remote.IFCMService;
 import com.example.logisticsfree.Remote.IGoogleAPI;
-import com.example.logisticsfree.models.Token;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -25,7 +24,6 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreSettings;
 import com.google.firebase.firestore.SetOptions;
 
 import org.json.JSONArray;
@@ -110,7 +108,7 @@ public class CustomerCall extends AppCompatActivity {
 
     private void moveRequestToOrder(String customerID) {
         DocumentReference requestPath = fs.document("order-requests/" + customerID + "/order-requests/" + mUser.getUid());
-        DocumentReference orderPath = fs.document("ordered-trucks/" + customerID);
+        DocumentReference orderPath = fs.document("ordered-trucks/" + customerID + "/ordered-trucks/" + mUser.getUid());
 
         moveFirestoreDocument(requestPath, orderPath);
     }
@@ -123,12 +121,12 @@ public class CustomerCall extends AppCompatActivity {
                 if (task.isSuccessful()) {
                     DocumentSnapshot document = task.getResult();
                     if (document != null) {
+//
+//                        Map<String, Object> data = new HashMap<>();
+//                        String vid = document.get("truck.truck.vid").toString();
+//                        data.put(vid, document.getData());
 
-                        Map<String, Object> data = new HashMap<>();
-                        String vid = document.get("truck.truck.vid").toString();
-                        data.put(vid, document.getData());
-
-                        toPath.set(data, SetOptions.merge())
+                        toPath.set(document.getData(), SetOptions.merge())
                                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                                     @Override
                                     public void onSuccess(Void aVoid) {
