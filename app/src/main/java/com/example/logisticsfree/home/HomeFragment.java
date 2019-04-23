@@ -1,5 +1,6 @@
 package com.example.logisticsfree.home;
 
+import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.databinding.ObservableArrayList;
 import android.databinding.ObservableList;
@@ -16,6 +17,8 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.example.logisticsfree.BR;
+import com.example.logisticsfree.Common.Common;
+import com.example.logisticsfree.DriverTracking;
 import com.example.logisticsfree.R;
 import com.example.logisticsfree.Utils;
 import com.example.logisticsfree.adapters.RecyclerViewBindingAdapter;
@@ -38,11 +41,8 @@ import java.util.List;
 
 public class HomeFragment extends Fragment implements ListItemsPresenter {
     private final String TAG = "HomeFragment";
-    List<RecyclerViewBindingAdapter.AdapterDataItem> list;
 
-    private FragmentHomeBinding mBinding;
     private ObservableList<RecyclerViewBindingAdapter.AdapterDataItem> listItems;
-
     private FirebaseUser mUser;
     private FirebaseFirestore afs;
 
@@ -62,7 +62,7 @@ public class HomeFragment extends Fragment implements ListItemsPresenter {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @android.support.annotation.Nullable ViewGroup container,
                              @android.support.annotation.Nullable Bundle savedInstanceState) {
-        mBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_home, container, false);
+        FragmentHomeBinding mBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_home, container, false);
         mBinding.setListLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
         mBinding.setModelList(initList());
         mBinding.setItemAnimator(new DefaultItemAnimator());
@@ -102,27 +102,29 @@ public class HomeFragment extends Fragment implements ListItemsPresenter {
     private ObservableList initList() {
         listItems = new ObservableArrayList<>();
         listItems.add(new RecyclerViewBindingAdapter.AdapterDataItem(R.layout.layout_listitem_heading,
-                new Pair<Integer, Object>(BR.headingModel, new HeadingModel("Your Orders"))));;
+                new Pair<Integer, Object>(BR.headingModel, new HeadingModel("Your Orders"))));
         return listItems;
     }
 
     @Override
-    public void onClick(ItemModel itemModel) {
-        Toast.makeText(getActivity(), "itemModel clicked", Toast.LENGTH_SHORT).show();
+    public void onClick(ItemModel itemModel) {  // open map & show directions
+        Intent intent = new Intent(getActivity(), DriverTracking.class);
+        Common.selectedOrder = itemModel.order;
+        startActivity(intent);
     }
 
     @Override
-    public void onDeleteClick(ItemModel itemModel) {
+    public void onDeleteClick(ItemModel itemModel) { // not used TODO: use
         Toast.makeText(getActivity(), "Delete clicked", Toast.LENGTH_SHORT).show();
     }
 
     @Override
-    public void onExpandClick(ItemModel itemModel) {
+    public void onExpandClick(ItemModel itemModel) { // not used
         Toast.makeText(getActivity(), "Expand clicked", Toast.LENGTH_SHORT).show();
     }
 
     @Override
-    public void onLoadMoreClick() {
+    public void onLoadMoreClick() { // not used
         Toast.makeText(getActivity(), "loadMore clicked", Toast.LENGTH_SHORT).show();
     }
 }
