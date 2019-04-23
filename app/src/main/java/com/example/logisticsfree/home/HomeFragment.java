@@ -4,7 +4,6 @@ import android.databinding.DataBindingUtil;
 import android.databinding.ObservableArrayList;
 import android.databinding.ObservableList;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -38,9 +37,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class HomeFragment extends Fragment implements ListItemsPresenter {
-    private static final String KEY_LAYOUT_MANAGER = "layoutManager";
     private final String TAG = "HomeFragment";
-    protected List<Order> mDataset;
     List<RecyclerViewBindingAdapter.AdapterDataItem> list;
 
     private FragmentHomeBinding mBinding;
@@ -58,7 +55,6 @@ public class HomeFragment extends Fragment implements ListItemsPresenter {
         super.onCreate(savedInstanceState);
         mUser = FirebaseAuth.getInstance().getCurrentUser();
         afs = FirebaseFirestore.getInstance();
-//        loadDataWithDelay(1500);
         loadFromFirestore();
     }
 
@@ -82,60 +78,32 @@ public class HomeFragment extends Fragment implements ListItemsPresenter {
                     Log.w(TAG, "Listen failed.", e);
                     return;
                 }
+                listItems.clear();
+                listItems.add(new RecyclerViewBindingAdapter.AdapterDataItem(R.layout.layout_listitem_heading,
+                        new Pair<Integer, Object>(BR.headingModel, new HeadingModel("Your Orders"))));
+
                 List<RecyclerViewBindingAdapter.AdapterDataItem> list = new ArrayList<>();
                 for (QueryDocumentSnapshot doc : snap) {
                     addToList(list, doc);
                 }
-                listItems.addAll(listItems.size() -1, list);
+                listItems.addAll(list);
             }
         });
     }
 
-    private void loadDataWithDelay(int delayMilli) {
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                listItems.addAll(listItems.size() - 1, getItems());//insert before loading cell
-                listItems.remove(listItems.size() - 1);//remove loading cell
-                listItems.add(
-                        new RecyclerViewBindingAdapter.AdapterDataItem(
-                                R.layout.layout_listitem_load_more,
-                                new Pair<Integer, Object>(BR.presenter, HomeFragment.this))
-                );
-            }
-        }, delayMilli);
-    }
-
-    private ObservableList initList() {
-        listItems = new ObservableArrayList<>();
-        listItems.add(new RecyclerViewBindingAdapter.AdapterDataItem(R.layout.layout_listitem_heading,
-                new Pair<Integer, Object>(BR.headingModel, new HeadingModel("Content Heading"))));
-
-        listItems.add(new RecyclerViewBindingAdapter.AdapterDataItem(R.layout.layout_listitem_loading));
-        return listItems;
-    }
-
-    private List<RecyclerViewBindingAdapter.AdapterDataItem> getItems() {
-        list = new ArrayList<>();
-        afs.collection("drivers/" + mUser.getUid() + "/orders/").addSnapshotListener(new EventListener<QuerySnapshot>() {
-            @Override
-            public void onEvent(@Nullable QuerySnapshot snap, @Nullable FirebaseFirestoreException e) {
-                if (e != null) {
-                    Log.w(TAG, "Listen failed.", e);
-                    return;
-                }
-                for (QueryDocumentSnapshot doc : snap) {
-                    addToList(list, doc);
-                }
-            }
-        });
-        return list;
-    }
+    //    needed because `this` couldn't get properly inside firebase Listener
     private void addToList(List<RecyclerViewBindingAdapter.AdapterDataItem> list, QueryDocumentSnapshot doc) {
         if (doc.exists()) {
             Order order = doc.toObject(Order.class);
             list.add(Utils.convert(new ItemModel(order), this));
         }
+    }
+
+    private ObservableList initList() {
+        listItems = new ObservableArrayList<>();
+        listItems.add(new RecyclerViewBindingAdapter.AdapterDataItem(R.layout.layout_listitem_heading,
+                new Pair<Integer, Object>(BR.headingModel, new HeadingModel("Your Orders"))));;
+        return listItems;
     }
 
     @Override
