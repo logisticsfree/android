@@ -14,8 +14,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/btn_register_background"
-        android:layout_marginTop="5dp"
-        android:layout_marginBottom="5dp"
+        android:layout_marginTop="3dp"
+        android:layout_marginBottom="2dp"
         android:onClick="@{(v) -> itemPresenter.onClick(itemModel)}">
         <LinearLayout
             android:layout_height="60dp"
@@ -68,15 +68,26 @@
         <LinearLayout
             android:orientation="horizontal"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="40dp">
+
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="30dp"
                 android:layout_weight="1"
                 android:drawableStart="@drawable/ic_baseline_place"
                 android:foreground="?selectableItemBackground"
-                android:gravity="center_vertical"
+                android:gravity="top|left"
                 android:text="@{itemModel.order.warehouse.name}"
+                android:textSize="18sp"
+                android:textStyle="normal"
+                tools:text="Item Text" />
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="30dp"
+                android:layout_weight="1"
+                android:foreground="?selectableItemBackground"
+                android:gravity="bottom"
+                android:text="@string/more_details"
                 android:textSize="18sp"
                 android:textStyle="normal"
                 tools:text="Item Text" />

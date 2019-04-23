@@ -68,6 +68,7 @@
     <string name="element_text">Element</string>
     <string name="grid_layout_manager">Grid Layout Manager</string>
     <string name="linear_layout_manager">Linear Layout Manager</string>
+    <string name="more_details">More Details...</string>
 
 
     <string-array name="truck_types">

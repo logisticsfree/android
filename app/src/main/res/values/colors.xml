@@ -16,7 +16,8 @@
     <color name="colorWhiteTransparent">#80FFFFFF</color>
 
     <color name="rippleEffectColor">#f816a463</color>
-    <color name="btnSignIn">#1fbad6</color>
+    <color name="btnSignIn">#00BCD4</color>
+    <color name="lightBlue">#00D7F1</color>
     <color name="btnRegister">#83838c</color>
 
 </resources>

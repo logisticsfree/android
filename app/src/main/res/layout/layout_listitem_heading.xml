@@ -11,7 +11,7 @@
         android:layout_height="wrap_content"
         android:textSize="24sp"
         android:textStyle="bold"
-        android:drawableStart="@drawable/ic_toys"
+        android:drawableStart="@drawable/ic_baseline_check_circle"
         android:drawablePadding="5dp"
         android:text="@{headingModel.heading}"
         android:gravity="center_vertical"
