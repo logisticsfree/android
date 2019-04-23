@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+    <data>
+        <variable
+            name="itemModel"
+            type="com.example.logisticsfree.models.ItemModel"/>
+        <variable
+            name="itemPresenter"
+            type="com.example.logisticsfree.presenters.ListItemsPresenter"/>
+    </data>
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/btn_register_background"
+        android:layout_marginTop="3dp"
+        android:layout_marginBottom="2dp"
+        android:onClick="@{(v) -> itemPresenter.onClick(itemModel)}">
+        <LinearLayout
+            android:layout_height="60dp"
+            android:layout_width="match_parent">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:drawableStart="@drawable/ic_baseline_date_range"
+                android:foreground="?selectableItemBackground"
+                android:gravity="center_vertical"
+                android:text="@{itemModel.order.date}"
+                android:textSize="18sp"
+                android:textStyle="normal"
+                tools:text="Item Text" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:foreground="?selectableItemBackground"
+                android:gravity="center_vertical"
+                android:drawableStart="@drawable/ic_baseline_watch_later"
+                android:text="@{itemModel.order.time}"
+                android:textSize="18sp"
+                android:textStyle="normal"
+                tools:text="Item Text" />
+
+            <!--TODO: Enable This-->
+            <!--<ImageView-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="match_parent"-->
+                <!--android:layout_gravity="right"-->
+                <!--android:layout_marginEnd="15dp"-->
+                <!--android:foreground="?selectableItemBackground"-->
+                <!--android:onClick="@{(v) -> itemPresenter.onDeleteClick(itemModel)}"-->
+                <!--android:src="@drawable/ic_delete" />-->
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="right"
+                android:layout_marginEnd="15dp"
+                android:foreground="?selectableItemBackground"
+                android:onClick="@{(v) -> itemPresenter.onExpandClick(itemModel)}"
+                android:src="@drawable/ic_baseline_play_circle_filled" />
+
+        </LinearLayout>
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="40dp">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="30dp"
+                android:layout_weight="1"
+                android:drawableStart="@drawable/ic_baseline_place"
+                android:foreground="?selectableItemBackground"
+                android:gravity="top|left"
+                android:text="@{itemModel.order.warehouse.name}"
+                android:textSize="18sp"
+                android:textStyle="normal"
+                tools:text="Item Text" />
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="30dp"
+                android:layout_weight="1"
+                android:foreground="?selectableItemBackground"
+                android:gravity="bottom"
+                android:text="@string/more_details"
+                android:textSize="18sp"
+                android:textStyle="normal"
+                tools:text="Item Text" />
+        </LinearLayout>
+    </LinearLayout>
+</layout>
