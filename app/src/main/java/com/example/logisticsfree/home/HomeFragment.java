@@ -36,8 +36,11 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class HomeFragment extends Fragment implements ListItemsPresenter {
     private final String TAG = "HomeFragment";
@@ -95,6 +98,8 @@ public class HomeFragment extends Fragment implements ListItemsPresenter {
     private void addToList(List<RecyclerViewBindingAdapter.AdapterDataItem> list, QueryDocumentSnapshot doc) {
         if (doc.exists()) {
             Order order = doc.toObject(Order.class);
+            order.setOrdersJson(doc.getData());
+            Log.d(TAG, "addToList: " + order.getOrdersJson().get("warehouse"));
             list.add(Utils.convert(new ItemModel(order), this));
         }
     }

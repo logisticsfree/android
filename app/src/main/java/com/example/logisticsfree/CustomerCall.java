@@ -60,7 +60,6 @@ public class CustomerCall extends AppCompatActivity {
         fs = FirebaseFirestore.getInstance();
         mUser = FirebaseAuth.getInstance().getCurrentUser();
 
-
         mService = Common.getGoogleAPI();
         mFCMService = Common.getFCMService();
 
