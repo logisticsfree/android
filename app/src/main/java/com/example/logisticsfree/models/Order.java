@@ -1,16 +1,39 @@
 package com.example.logisticsfree.models;
 
-public class Order {
-    String date, time;
-    Warehouse warehouse;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 
-    public Order(String date, String time, Warehouse warehouse) {
+import java.util.Map;
+
+public class Order {
+    String date, time, companyID;
+    Warehouse warehouse;
+    Map<String, Object> ordersJson;
+
+    public Order(String date, String time, String companyID, Warehouse warehouse, Map<String, Object> ordersJson) {
         this.date = date;
         this.time = time;
+        this.companyID = companyID;
         this.warehouse = warehouse;
+        this.ordersJson = ordersJson;
     }
 
     public Order() {
+    }
+
+    public Map<String, Object> getOrdersJson() {
+        return ordersJson;
+    }
+
+    public void setOrdersJson(Map<String, Object> ordersJson) {
+        this.ordersJson = ordersJson;
+    }
+
+    public String getCompanyID() {
+        return companyID;
+    }
+
+    public void setCompanyID(String companyID) {
+        this.companyID = companyID;
     }
 
     public String getDate() {
