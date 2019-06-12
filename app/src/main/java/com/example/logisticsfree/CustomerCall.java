@@ -86,7 +86,7 @@ public class CustomerCall extends AppCompatActivity {
                 intent.putExtra("lng", lng);
                 intent.putExtra("customerId", customerId);
                 moveRequestToOrder(customerId);
-                startActivity(intent);
+//                startActivity(intent);
                 finish();
             }
         });
