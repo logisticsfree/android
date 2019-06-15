@@ -96,14 +96,14 @@ public class DriverTracking extends AppCompatActivity implements OnMapReadyCallb
             public void run() {
                 try {
                     DateTime now = new DateTime();
-                    String warehouse = (String) getCoordinates().get("warehouse");
-                    String destination = (String) getCoordinates().get("destination");
+//                    String warehouse = (String) getCoordinates().get("warehouse");
+                    String origin =  Common.mLastLocation.getLatitude() + ", " + Common.mLastLocation.getLongitude();
+                    String destination = (String) getCoordinates().get("warehouse");
                     String[] waypoints = (String[]) getCoordinates().get("waypoints");
                     DirectionsResult result = DirectionsApi.newRequest(getGeoContext())
                             .mode(TravelMode.DRIVING)
-                            .origin(warehouse)
+                            .origin(origin)
                             .destination(destination)
-                            .waypoints(waypoints)
                             .departureTime(now)
                             .await();
                     results[0] = result;

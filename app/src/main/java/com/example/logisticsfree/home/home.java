@@ -1,7 +1,6 @@
 package com.example.logisticsfree.home;
 
 import android.Manifest;
-import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.LocationManager;
@@ -23,6 +22,7 @@ import android.widget.FrameLayout;
 import android.widget.Switch;
 import android.widget.Toast;
 
+import com.example.logisticsfree.Common.Common;
 import com.example.logisticsfree.R;
 import com.example.logisticsfree.models.Token;
 import com.example.logisticsfree.services.TrackingService;
@@ -141,8 +141,10 @@ public class home extends AppCompatActivity {
                     if (!startTrackerService()) {
                         availableSwitch.setChecked(false);
                     }
+                    Common.availabile = true;
                 } else {
                     stopTrackerService();
+                    Common.availabile = false;
                 }
             }
         });
