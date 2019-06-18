@@ -33,6 +33,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.logisticsfree.home.home;
 import com.example.logisticsfree.models.Token;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -227,6 +228,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
                                 Toast.makeText(LoginActivity.this, "Signup successful!", Toast.LENGTH_LONG).show();
                                 setResult(Activity.RESULT_OK, new Intent().putExtra("success", true));
+                                startActivity(new Intent(LoginActivity.this, home.class));
+
                                 finish();
                             }
                         }

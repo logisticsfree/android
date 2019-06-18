@@ -36,11 +36,8 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
-import org.json.JSONObject;
-
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class HomeFragment extends Fragment implements ListItemsPresenter {
     private final String TAG = "HomeFragment";
@@ -99,7 +96,7 @@ public class HomeFragment extends Fragment implements ListItemsPresenter {
         if (doc.exists()) {
             Order order = doc.toObject(Order.class);
             order.setOrdersJson(doc.getData());
-            Log.d(TAG, "addToList: " + order.getOrdersJson().get("warehouse"));
+            Log.d(TAG, "addToList: " + order.getOrdersJson());
             list.add(Utils.convert(new ItemModel(order), this));
         }
     }
@@ -112,10 +109,15 @@ public class HomeFragment extends Fragment implements ListItemsPresenter {
     }
 
     @Override
-    public void onClick(ItemModel itemModel) {  // open map & show directions
-        Intent intent = new Intent(getActivity(), DriverTracking.class);
+    public void onClick(ItemModel itemModel) {  // open map & show directions to warehouse
         Common.selectedOrder = itemModel.order;
-        startActivity(intent);
+        if (Common.availabile && Common.mLastLocation != null) {
+            Intent intent = new Intent(getActivity(), DriverTracking.class);
+            startActivity(intent);
+
+        } else {
+            Toast.makeText(getActivity(), "Please enable the availability switch", Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override

@@ -70,6 +70,7 @@
     <string name="linear_layout_manager">Linear Layout Manager</string>
     <string name="more_details">More Details...</string>
     <string name="directionsApiKey">AIzaSyCd6J1_1vKsKoq7cP5LBBv28TBIZ1EaBwk</string>
+    <string name="dotted_line">................................................</string>
 
 
     <string-array name="truck_types">

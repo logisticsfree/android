@@ -20,6 +20,7 @@ public class Common {
     public static Order selectedOrder;
 
     public static User currentUser;
+    public static boolean availabile = false;
 
     public static Location mLastLocation=null;
 
