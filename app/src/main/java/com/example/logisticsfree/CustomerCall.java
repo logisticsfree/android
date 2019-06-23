@@ -13,6 +13,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.logisticsfree.Common.Common;
+import com.example.logisticsfree.Common.Utils;
 import com.example.logisticsfree.Remote.IFCMService;
 import com.example.logisticsfree.Remote.IGoogleAPI;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -33,6 +34,7 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 
+import okhttp3.internal.Util;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -40,7 +42,7 @@ import retrofit2.Response;
 public class CustomerCall extends AppCompatActivity {
     private final String TAG = "CustomerCall";
 
-    TextView txtTime, txtAddress, txtDistance;
+    TextView txtTime, txtAddress, txtDistance, txtDate, txtCompany;
     MediaPlayer mediaPlayer;
     Button btnCancel, btnAccept;
     FirebaseFirestore fs;
@@ -64,8 +66,9 @@ public class CustomerCall extends AppCompatActivity {
         mFCMService = Common.getFCMService();
 
         txtTime = findViewById(R.id.txtTime);
-        txtAddress = findViewById(R.id.txtAddress);
-        txtDistance = findViewById(R.id.txtDistance);
+        txtDate = findViewById(R.id.txtDate);
+//        txtDistance = findViewById(R.id.txtDistance);
+        txtCompany = findViewById(R.id.txtCompany);
 
         btnAccept = findViewById(R.id.btnAccept);
         btnCancel = findViewById(R.id.btnDecline);
@@ -85,6 +88,11 @@ public class CustomerCall extends AppCompatActivity {
                 intent.putExtra("lat", lat);
                 intent.putExtra("lng", lng);
                 intent.putExtra("customerId", customerId);
+
+//                ng app will create the order Document at /order-requests/CompnayID/order-requests/TruckID
+//                after accept the order move it(orderDocument)
+//                from  /order-requests/companyID/order-requests/TruckID
+//                to    /ordered-trucks/TruckID/ordered-trucks/companyID
                 moveRequestToOrder(customerId);
 //                startActivity(intent);
                 finish();
@@ -98,10 +106,21 @@ public class CustomerCall extends AppCompatActivity {
         if (getIntent() != null) {
             lat = Double.parseDouble(getIntent().getStringExtra("lat"));
             lng = Double.parseDouble(getIntent().getStringExtra("lng"));
-            customerId = getIntent().getStringExtra("customerId");
+            customerId = getIntent().getStringExtra("customerID");
             System.out.println("CustomerID : " + customerId);
 
-            getDirection(lat, lng);
+            txtTime.setText(getIntent().getStringExtra("time"));
+            txtDate.setText(getIntent().getStringExtra("date"));
+
+            FirebaseFirestore.getInstance().document("users/" + customerId)
+                    .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+//                    txtCompany.setText((String) task.getResult().);
+                    txtCompany.setText(task.getResult().getString("name"));
+                }
+            });
+//            getDirection(lat, lng);
         }
     }
 
@@ -109,57 +128,57 @@ public class CustomerCall extends AppCompatActivity {
         DocumentReference requestPath = fs.document("order-requests/" + customerID + "/order-requests/" + mUser.getUid());
         DocumentReference orderPath = fs.document("ordered-trucks/" + customerID + "/ordered-trucks/" + mUser.getUid());
 
-        moveFirestoreDocument(requestPath, orderPath);
+        Utils.moveFirestoreDocument(requestPath, orderPath);
     }
 
-    public void moveFirestoreDocument(final DocumentReference fromPath, final DocumentReference toPath) {
-        System.out.println(fromPath.getPath() + " " + toPath.getPath());
-        fromPath.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful()) {
-                    DocumentSnapshot document = task.getResult();
-                    if (document != null) {
+//    public void moveFirestoreDocument(final DocumentReference fromPath, final DocumentReference toPath) {
+//        System.out.println(fromPath.getPath() + " " + toPath.getPath());
+//        fromPath.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+//            @Override
+//            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+//                if (task.isSuccessful()) {
+//                    DocumentSnapshot document = task.getResult();
+//                    if (document != null) {
+////
+////                        Map<String, Object> data = new HashMap<>();
+////                        String vid = document.get("truck.truck.vid").toString();
+////                        data.put(vid, document.getData());
 //
-//                        Map<String, Object> data = new HashMap<>();
-//                        String vid = document.get("truck.truck.vid").toString();
-//                        data.put(vid, document.getData());
-
-                        toPath.set(document.getData(), SetOptions.merge())
-                                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                    @Override
-                                    public void onSuccess(Void aVoid) {
-                                        Log.d(TAG, "DocumentSnapshot successfully written!");
-                                        fromPath.delete()
-                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                    @Override
-                                                    public void onSuccess(Void aVoid) {
-                                                        Log.d(TAG, "DocumentSnapshot successfully deleted!");
-                                                    }
-                                                })
-                                                .addOnFailureListener(new OnFailureListener() {
-                                                    @Override
-                                                    public void onFailure(@NonNull Exception e) {
-                                                        Log.w(TAG, "Error deleting document", e);
-                                                    }
-                                                });
-                                    }
-                                })
-                                .addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        Log.w(TAG, "Error writing document", e);
-                                    }
-                                });
-                    } else {
-                        Log.d(TAG, "No such document");
-                    }
-                } else {
-                    Log.d(TAG, "get failed with ", task.getException());
-                }
-            }
-        });
-    }
+//                        toPath.set(document.getData(), SetOptions.merge())
+//                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+//                                    @Override
+//                                    public void onSuccess(Void aVoid) {
+//                                        Log.d(TAG, "DocumentSnapshot successfully written!");
+//                                        fromPath.delete()
+//                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+//                                                    @Override
+//                                                    public void onSuccess(Void aVoid) {
+//                                                        Log.d(TAG, "DocumentSnapshot successfully deleted!");
+//                                                    }
+//                                                })
+//                                                .addOnFailureListener(new OnFailureListener() {
+//                                                    @Override
+//                                                    public void onFailure(@NonNull Exception e) {
+//                                                        Log.w(TAG, "Error deleting document", e);
+//                                                    }
+//                                                });
+//                                    }
+//                                })
+//                                .addOnFailureListener(new OnFailureListener() {
+//                                    @Override
+//                                    public void onFailure(@NonNull Exception e) {
+//                                        Log.w(TAG, "Error writing document", e);
+//                                    }
+//                                });
+//                    } else {
+//                        Log.d(TAG, "No such document");
+//                    }
+//                } else {
+//                    Log.d(TAG, "get failed with ", task.getException());
+//                }
+//            }
+//        });
+//    }
 
     private void cancelBooking(String customerId) {
 //        Token token = new Token(customerId);

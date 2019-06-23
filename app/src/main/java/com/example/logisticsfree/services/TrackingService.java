@@ -171,5 +171,7 @@ public class TrackingService extends Service {
     public void onDestroy() {
         super.onDestroy();
         client.removeLocationUpdates(locationCallback);
+        stopSelf();
+//        stopReceiver.abortBroadcast();
     }
 }

@@ -5,12 +5,24 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.example.logisticsfree.DriverTracking">
-    <fragment xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
+    <fragment
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/map"
         tools:context=".DriverTracking"
-        android:name="com.google.android.gms.maps.SupportMapFragment" />
+        android:name="com.google.android.gms.maps.SupportMapFragment">
+
+        <Button
+            android:id="@+id/btn_arrived"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center|bottom"
+            android:background="@drawable/yellowloginbutton"
+            android:visibility="gone"
+            android:text="@string/arrived"
+            android:padding="10dp"
+            android:layout_marginBottom="20dp"
+            android:paddingBottom="10dp"/>
+    </fragment>
 
 </RelativeLayout>
