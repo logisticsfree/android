@@ -71,6 +71,9 @@
     <string name="more_details">More Details...</string>
     <string name="directionsApiKey">AIzaSyCd6J1_1vKsKoq7cP5LBBv28TBIZ1EaBwk</string>
     <string name="dotted_line">................................................</string>
+    <string name="arrived">Arrived</string>
+    <string name="please_wait">Please Wait</string>
+    <string name="wait_for_further_instructions">Wait For Further Instructions</string>
 
 
     <string-array name="truck_types">

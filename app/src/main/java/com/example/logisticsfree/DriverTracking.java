@@ -1,6 +1,7 @@
 package com.example.logisticsfree;
 
 import android.Manifest;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -9,10 +10,17 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.example.logisticsfree.Common.Common;
+import com.example.logisticsfree.Common.Utils;
 import com.example.logisticsfree.models.Order;
+import com.firebase.geofire.GeoFire;
+import com.firebase.geofire.GeoLocation;
+import com.firebase.geofire.GeoQuery;
+import com.firebase.geofire.GeoQueryEventListener;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -24,6 +32,13 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.common.collect.Iterators;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.SetOptions;
 import com.google.gson.Gson;
 import com.google.maps.DirectionsApi;
 import com.google.maps.GeoApiContext;
@@ -44,6 +59,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 
@@ -56,10 +72,14 @@ public class DriverTracking extends AppCompatActivity implements OnMapReadyCallb
     private GoogleMap mMap;
     private Order currentOrder;
 
+    Button arrivedButton;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_driver_tracking);
+
+        arrivedButton = findViewById(R.id.btn_arrived);
         currentOrder = Common.selectedOrder;
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
@@ -67,6 +87,26 @@ public class DriverTracking extends AppCompatActivity implements OnMapReadyCallb
                 .findFragmentById(R.id.map);
         assert mapFragment != null;
         mapFragment.getMapAsync(this);
+
+        arrivedButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setAsArrived();
+                displayWaitingScreen();
+
+            }
+        });
+    }
+
+    private void displayWaitingScreen() {
+//        ProgressDialog dialog = new ProgressDialog(this);
+//        dialog.setMessage("message");
+//        dialog.setCancelable(false);
+//        dialog.setInverseBackgroundForced(false);
+//        dialog.show();
+        Intent intent = new Intent(this, WaitingActivity.class);
+        startActivity(intent);
+        finish();
     }
 
 
@@ -147,34 +187,76 @@ public class DriverTracking extends AppCompatActivity implements OnMapReadyCallb
 //                putMyLocation(mMap);
             }
         });
+
+//        when driver arrived (close: 500m) to warehouse display 'arrived' button
+        GeoFire geoFire = new GeoFire(FirebaseDatabase.getInstance().getReference("/driver-locations"));
+        HashMap warehouseMap = (HashMap) currentOrder.getOrdersJson().get("warehouse");
+
+        GeoQuery geoQuery = geoFire.queryAtLocation(new GeoLocation((double)warehouseMap.get("latitude"), (double) warehouseMap.get("longitude")), 0.5f);
+        geoQuery.addGeoQueryEventListener(new GeoQueryEventListener() {
+            @Override
+            public void onKeyEntered(String key, GeoLocation location) {
+                arrivedButton.setVisibility(View.VISIBLE);
+//                setAsArrived();
+            }
+
+            @Override
+            public void onKeyExited(String key) {
+                arrivedButton.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onKeyMoved(String key, GeoLocation location) { }
+
+            @Override
+            public void onGeoQueryReady() { }
+
+            @Override
+            public void onGeoQueryError(DatabaseError error) { }
+        });
+    }
+
+    private void setAsArrived() {
+        FirebaseFirestore fs = FirebaseFirestore.getInstance();
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        String orderPath = "drivers/" + user.getUid() + "/orders/" + currentOrder.getCompanyID();
+
+        Map<String, Object> data = new HashMap<>();
+        data.put("arrived", true);
+
+//      set drivers/truckID/orders/companyID->arrived: true
+//        then sync function will copy it to ordered-trucks collection
+//        ng app should handle it from their
+        fs.document(orderPath).set(data, SetOptions.merge());
+
     }
 
     private HashMap<String, Serializable> getCoordinates() {
         HashMap warehouseMap = (HashMap) currentOrder.getOrdersJson().get("warehouse");
         String warehouse = warehouseMap.get("latitude") + ", " + warehouseMap.get("longitude");
-
-        HashMap ordersMap = (HashMap) currentOrder.getOrdersJson().get("orders");
-        JSONObject ordersJson = new JSONObject(ordersMap);
-
-        int noOfOrders = Iterators.size(ordersJson.keys());
-        String[] orders = new String[noOfOrders];
-
-        for (Iterator<String> it = ordersJson.keys(); it.hasNext(); ) {
-            String key = it.next();
-
-            try {
-                HashMap order = (HashMap) ordersJson.get(key);
-                HashMap dist = (HashMap) order.get("distributor");
-                orders[(int) (long) order.get("seqNo")] = dist.get("latitude") + "," + dist.get("longitude");
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
+//
+//        HashMap ordersMap = (HashMap) currentOrder.getOrdersJson().get("orders");
+//        JSONObject ordersJson = new JSONObject(ordersMap);
+//
+//        int noOfOrders = Iterators.size(ordersJson.keys());
+//        String[] orders = new String[noOfOrders];
+//
+//        for (Iterator<String> it = ordersJson.keys(); it.hasNext(); ) {
+//            String key = it.next();
+//
+//            try {
+//                HashMap order = (HashMap) ordersJson.get(key);
+//                HashMap dist = (HashMap) order.get("distributor");
+//                orders[(int) (long) order.get("seqNo")] = dist.get("latitude") + "," + dist.get("longitude");
+//            } catch (JSONException e) {
+//                e.printStackTrace();
+//            }
+//        }
 
         HashMap<String, java.io.Serializable> coordinates = new HashMap<>();
         coordinates.put("warehouse", warehouse);
-        coordinates.put("destination", orders[noOfOrders - 1]);
-        coordinates.put("waypoints", Arrays.copyOf(orders, noOfOrders - 1));
+//        coordinates.put("destination", orders[noOfOrders - 1]);
+//        coordinates.put("waypoints", Arrays.copyOf(orders, noOfOrders - 1));
         return coordinates;
     }
 

@@ -1,6 +1,9 @@
 package com.example.logisticsfree.home;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.databinding.DataBindingUtil;
 import android.databinding.ObservableArrayList;
 import android.databinding.ObservableList;
@@ -21,12 +24,14 @@ import com.example.logisticsfree.Common.Common;
 import com.example.logisticsfree.DriverTracking;
 import com.example.logisticsfree.R;
 import com.example.logisticsfree.Utils;
+import com.example.logisticsfree.WaitingActivity;
 import com.example.logisticsfree.adapters.RecyclerViewBindingAdapter;
 import com.example.logisticsfree.databinding.FragmentHomeBinding;
 import com.example.logisticsfree.models.HeadingModel;
 import com.example.logisticsfree.models.ItemModel;
 import com.example.logisticsfree.models.Order;
 import com.example.logisticsfree.presenters.ListItemsPresenter;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.annotations.Nullable;
@@ -35,8 +40,10 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.SetOptions;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class HomeFragment extends Fragment implements ListItemsPresenter {
@@ -45,6 +52,8 @@ public class HomeFragment extends Fragment implements ListItemsPresenter {
     private ObservableList<RecyclerViewBindingAdapter.AdapterDataItem> listItems;
     private FirebaseUser mUser;
     private FirebaseFirestore afs;
+
+    private BroadcastReceiver broadcastReceiver;
 
     public HomeFragment() {
         // Required empty public constructor
@@ -56,6 +65,30 @@ public class HomeFragment extends Fragment implements ListItemsPresenter {
         mUser = FirebaseAuth.getInstance().getCurrentUser();
         afs = FirebaseFirestore.getInstance();
         loadFromFirestore();
+        checkOrderProcessingStatus();
+
+        broadcastReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context arg0, Intent intent) {
+                String action = intent.getAction();
+                if (action.equals("finish_fragment_home")) {
+                    getActivity().finish();
+                }
+            }
+        };
+        getActivity().registerReceiver(broadcastReceiver, new IntentFilter("finish_fragment_home"));
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        getActivity().unregisterReceiver(broadcastReceiver);
     }
 
     @android.support.annotation.Nullable
@@ -68,6 +101,22 @@ public class HomeFragment extends Fragment implements ListItemsPresenter {
         mBinding.setItemAnimator(new DefaultItemAnimator());
 
         return mBinding.getRoot();
+    }
+
+    private void checkOrderProcessingStatus() {
+        afs.collection("drivers/" + mUser.getUid() + "/orders/")
+                .whereEqualTo("arrived", true).limit(1).get()
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                        if (queryDocumentSnapshots.size() < 1) return;
+
+                        Common.selectedOrder = queryDocumentSnapshots.getDocuments().get(0).toObject(Order.class);
+
+                        Intent intent = new Intent(getContext(), WaitingActivity.class);
+                        startActivity(intent);
+                    }
+                });
     }
 
     private void loadFromFirestore() {
@@ -84,7 +133,12 @@ public class HomeFragment extends Fragment implements ListItemsPresenter {
 
                 List<RecyclerViewBindingAdapter.AdapterDataItem> list = new ArrayList<>();
                 for (QueryDocumentSnapshot doc : snap) {
-                    addToList(list, doc);
+                    if (doc.getBoolean("arrived") != null) { // if arrived is not null and
+                        if (!doc.getBoolean("arrived")) // it's set to false
+                            addToList(list, doc);
+                    } else {    // or arrived is not set
+                        addToList(list, doc);
+                    }
                 }
                 listItems.addAll(list);
             }
@@ -121,8 +175,19 @@ public class HomeFragment extends Fragment implements ListItemsPresenter {
     }
 
     @Override
-    public void onDeleteClick(ItemModel itemModel) { // not used TODO: use
-        Toast.makeText(getActivity(), "Delete clicked", Toast.LENGTH_SHORT).show();
+    public void onDeleteClick(ItemModel itemModel) { // used: only for testing purposes
+//        Toast.makeText(getActivity(), "Delete clicked", Toast.LENGTH_SHORT).show();
+        Log.d(TAG, "onDeleteClick: " + itemModel);
+
+        HashMap<String, Object> data = new HashMap<>();
+        data.put("available", true);
+
+        FirebaseFirestore fs = FirebaseFirestore.getInstance();
+        FirebaseAuth user = FirebaseAuth.getInstance();
+        fs.document("/drivers/" + user.getUid()).set(data, SetOptions.merge());
+        fs.document("/ordered-trucks/" + itemModel.order.getCompanyID() + "/ordered-trucks/" + user.getUid())
+                .delete();
+        fs.document("/drivers/" + user.getUid() + "/orders/" + itemModel.order.getCompanyID()).delete();
     }
 
     @Override

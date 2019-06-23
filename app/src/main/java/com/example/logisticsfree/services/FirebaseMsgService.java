@@ -39,13 +39,17 @@ public class FirebaseMsgService extends FirebaseMessagingService {
             String customerId = data.get("customerId");
             String lat = data.get("lat");
             String lng = data.get("lng");
-            System.out.println("Debug lat" + lat + "lng" + lng);
+            String time = data.get("time");
+            String date = data.get("date");
+            System.out.println("Debug lat" + lat + "lng" + date);
 
             Intent intent = new Intent(getBaseContext(), CustomerCall.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             intent.putExtra("lat", lat);
             intent.putExtra("lng", lng);
-            intent.putExtra("customerId", customerId);
+            intent.putExtra("date", date);
+            intent.putExtra("time", time);
+            intent.putExtra("customerID", customerId);
             System.out.println("CustomerID: : " + customerId);
 
             startActivity(intent);
