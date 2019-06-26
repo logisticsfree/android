@@ -23,7 +23,7 @@ import com.example.logisticsfree.BR;
 import com.example.logisticsfree.Common.Common;
 import com.example.logisticsfree.DriverTracking;
 import com.example.logisticsfree.R;
-import com.example.logisticsfree.TripProcessing;
+import com.example.logisticsfree.trip.TripProcessing;
 import com.example.logisticsfree.Utils;
 import com.example.logisticsfree.WaitingActivity;
 import com.example.logisticsfree.adapters.RecyclerViewBindingAdapter;

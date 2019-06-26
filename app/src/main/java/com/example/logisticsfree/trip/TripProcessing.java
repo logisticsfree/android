@@ -1,4 +1,4 @@
-package com.example.logisticsfree;
+package com.example.logisticsfree.trip;
 
 import android.Manifest;
 import android.content.Intent;
@@ -13,11 +13,14 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.View;
+import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.Toast;
 
 import com.example.logisticsfree.Common.Common;
+import com.example.logisticsfree.R;
 import com.example.logisticsfree.services.TrackingService;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -67,6 +70,8 @@ public class TripProcessing extends AppCompatActivity implements OnMapReadyCallb
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_trip_processing);
 
+        Button btnUnload = findViewById(R.id.btn_unload);
+
         Toolbar myToolbar = findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
         setTitle("Processing");
@@ -80,6 +85,13 @@ public class TripProcessing extends AppCompatActivity implements OnMapReadyCallb
         assert mapFragment != null;
         mapFragment.getMapAsync(this);
 
+        btnUnload.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, "onClick: ");
+                startActivity(new Intent(getApplicationContext(), OrderList.class));
+            }
+        });
     }
 
     @Override
@@ -234,9 +246,9 @@ public class TripProcessing extends AppCompatActivity implements OnMapReadyCallb
         GeoApiContext geoApiContext = new GeoApiContext();
         return geoApiContext.setQueryRateLimit(3)
                 .setApiKey(getString(R.string.directionsApiKey))
-                .setConnectTimeout(1, TimeUnit.SECONDS)
-                .setReadTimeout(1, TimeUnit.SECONDS)
-                .setWriteTimeout(1, TimeUnit.SECONDS);
+                .setConnectTimeout(5, TimeUnit.SECONDS)
+                .setReadTimeout(5, TimeUnit.SECONDS)
+                .setWriteTimeout(5, TimeUnit.SECONDS);
     }
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();

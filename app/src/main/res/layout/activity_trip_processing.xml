@@ -1,10 +1,9 @@
-<?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.logisticsfree.TripProcessing">
+    tools:context="com.example.logisticsfree.trip.TripProcessing">
     <android.support.v7.widget.Toolbar
         android:id="@+id/my_toolbar"
         android:layout_width="match_parent"
@@ -18,17 +17,17 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/map"
-        tools:context=".TripProcessing"
+        tools:context=".trip.TripProcessing"
         android:layout_marginTop="?attr/actionBarSize"
         android:name="com.google.android.gms.maps.SupportMapFragment">
 
         <Button
-            android:id="@+id/btn_arrived"
+            android:id="@+id/btn_unload"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center|bottom"
             android:background="@drawable/yellowloginbutton"
-            android:visibility="gone"
+            android:visibility="visible"
             android:text="@string/arrived"
             android:padding="10dp"
             android:layout_marginBottom="20dp"

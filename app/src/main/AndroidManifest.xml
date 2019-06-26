@@ -18,8 +18,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
-        <activity android:name=".OrderList"></activity>
-        <activity android:name=".TripProcessing" />
+        <activity android:name=".trip.OrderList"></activity>
+        <activity android:name=".trip.TripProcessing" />
         <activity android:name=".LoadingBay" />
         <activity android:name=".WaitingActivity" />
         <activity android:name=".setting.ProfileActivity" />

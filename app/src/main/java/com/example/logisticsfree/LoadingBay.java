@@ -12,11 +12,10 @@ import android.widget.Button;
 import com.example.logisticsfree.Common.Common;
 import com.example.logisticsfree.Common.Utils;
 import com.example.logisticsfree.models.Trip;
+import com.example.logisticsfree.trip.TripProcessing;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.core.operation.Merge;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -31,8 +30,6 @@ import de.codecrafters.tableview.TableView;
 import de.codecrafters.tableview.model.TableColumnWeightModel;
 import de.codecrafters.tableview.toolkit.SimpleTableDataAdapter;
 import de.codecrafters.tableview.toolkit.SimpleTableHeaderAdapter;
-
-import static java.security.AccessController.getContext;
 
 public class LoadingBay extends AppCompatActivity {
 
