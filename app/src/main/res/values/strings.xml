@@ -74,6 +74,9 @@
     <string name="arrived">Arrived</string>
     <string name="please_wait">Please Wait</string>
     <string name="wait_for_further_instructions">Wait For Further Instructions</string>
+    <string name="start_loading">Start Loading</string>
+    <string name="proceed_to_loading_bay">Proceed to Loading Bay</string>
+    <string name="start_trip">Start Trip</string>
 
 
     <string-array name="truck_types">

@@ -23,6 +23,7 @@ import com.example.logisticsfree.BR;
 import com.example.logisticsfree.Common.Common;
 import com.example.logisticsfree.DriverTracking;
 import com.example.logisticsfree.R;
+import com.example.logisticsfree.TripProcessing;
 import com.example.logisticsfree.Utils;
 import com.example.logisticsfree.WaitingActivity;
 import com.example.logisticsfree.adapters.RecyclerViewBindingAdapter;
@@ -30,6 +31,7 @@ import com.example.logisticsfree.databinding.FragmentHomeBinding;
 import com.example.logisticsfree.models.HeadingModel;
 import com.example.logisticsfree.models.ItemModel;
 import com.example.logisticsfree.models.Order;
+import com.example.logisticsfree.models.Trip;
 import com.example.logisticsfree.presenters.ListItemsPresenter;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -66,6 +68,8 @@ public class HomeFragment extends Fragment implements ListItemsPresenter {
         afs = FirebaseFirestore.getInstance();
         loadFromFirestore();
         checkOrderProcessingStatus();
+
+        getActivity().setTitle("Orders");
 
         broadcastReceiver = new BroadcastReceiver() {
             @Override
@@ -109,12 +113,34 @@ public class HomeFragment extends Fragment implements ListItemsPresenter {
                 .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                     @Override
                     public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                        if (queryDocumentSnapshots.size() < 1) return;
+                        if (queryDocumentSnapshots.size() < 1) {
+                            checkForProcessingTrip();
+                        } else {
+                            Common.selectedOrder = queryDocumentSnapshots.getDocuments().get(0).toObject(Order.class);
+                            Intent intent = new Intent(getContext(), WaitingActivity.class);
+                            startActivity(intent);
+                        }
+                    }
+                });
+    }
 
-                        Common.selectedOrder = queryDocumentSnapshots.getDocuments().get(0).toObject(Order.class);
+    private void checkForProcessingTrip() {
+        afs.collection("trips")
+                .whereEqualTo("driverID", mUser.getUid()).limit(1).get()
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                        Log.d(TAG, "onSuccess: " + queryDocumentSnapshots.size());
+                        if (queryDocumentSnapshots.size() < 1) {
+                            return;
+                        } else {
+                            Common.currentTrip = queryDocumentSnapshots.getDocuments().get(0).toObject(Trip.class);
+                            Log.d(TAG, "onSuccess: " + queryDocumentSnapshots.getDocuments());
 
-                        Intent intent = new Intent(getContext(), WaitingActivity.class);
-                        startActivity(intent);
+                            Intent intent = new Intent(getContext(), TripProcessing.class);
+                            startActivity(intent);
+                            getActivity().finish();
+                        }
                     }
                 });
     }
