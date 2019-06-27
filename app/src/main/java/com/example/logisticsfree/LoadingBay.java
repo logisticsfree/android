@@ -99,6 +99,7 @@ public class LoadingBay extends AppCompatActivity {
 
                 Map<String, Object> data = new HashMap<>();
                 data.put("driverID", mUID);
+                data.put("active", true);
                 fromDoc.set(data, SetOptions.merge()).addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {

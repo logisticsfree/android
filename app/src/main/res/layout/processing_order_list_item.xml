@@ -1,24 +1,30 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="horizontal">
-
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+    <data>
+        <variable
+            name="itemModel"
+            type="com.example.logisticsfree.models.ItemModel"/>
+        <variable
+            name="itemPresenter"
+            type="com.example.logisticsfree.presenters.ListItemsPresenter"/>
+    </data>
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/orders_menu_item"
+        android:layout_marginTop="1dp"
         android:layout_marginBottom="1dp"
-        android:layout_marginRight="3dp"
-        android:layout_marginLeft="3dp">
+        android:layout_marginRight="1dp"
+        android:layout_marginLeft="1dp"
 
+        android:onClick="@{(v) -> itemPresenter.onClick(itemModel)}">
         <LinearLayout android:layout_height="wrap_content"
             android:layout_width="match_parent"
             android:padding="10dp">
 
             <TextView
-                android:id="@+id/tvAnimalName"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
@@ -26,10 +32,9 @@
                 android:drawableStart="@drawable/ic_baseline_place"
                 android:foreground="?selectableItemBackground"
                 android:gravity="center_vertical"
-                android:text="asdf"
+                android:text="@{itemModel.invoice.distributor.name}"
                 android:textSize="20sp"
-                android:textStyle="bold"
-                tools:text="Warehouse" />
+                android:textStyle="bold" />
         </LinearLayout>
 
         <View
@@ -52,9 +57,10 @@
                 android:drawableStart="@drawable/ic_baseline_date_range"
                 android:foreground="?selectableItemBackground"
                 android:gravity="center_vertical"
-                android:text="asdf"
+                android:text="@{itemModel.invoice.invoice}"
                 android:textSize="18sp"
-                android:textStyle="normal"/>
+                android:textStyle="normal"
+                tools:text="Item Text" />
 
             <TextView
                 android:layout_width="0dp"
@@ -63,9 +69,11 @@
                 android:drawableStart="@drawable/ic_baseline_watch_later"
                 android:foreground="?selectableItemBackground"
                 android:gravity="center_vertical"
-                android:text="asdf"
+                android:onClick="@{(v) -> itemPresenter.onDeleteClick(itemModel)}"
+                android:text="@{itemModel.invoice.weight}"
                 android:textSize="18sp"
-                android:textStyle="normal"/>
+                android:textStyle="normal"
+                tools:text="Item Text" />
 
             <!--TODO: Enable This-->
             <!--<ImageView-->
@@ -107,5 +115,4 @@
             <!--android:text="@string/more_details"/>-->
         </LinearLayout>
     </LinearLayout>
-
-</LinearLayout>
+</layout>

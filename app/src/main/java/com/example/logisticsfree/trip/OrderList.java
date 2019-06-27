@@ -3,31 +3,59 @@ package com.example.logisticsfree.trip;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.databinding.DataBindingUtil;
+import android.databinding.ObservableArrayList;
+import android.databinding.ObservableList;
 import android.location.LocationManager;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import android.util.Pair;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.Toast;
 
+import com.example.logisticsfree.BR;
 import com.example.logisticsfree.Common.Common;
+import com.example.logisticsfree.DriverTracking;
 import com.example.logisticsfree.R;
+import com.example.logisticsfree.Utils;
 import com.example.logisticsfree.adapters.ProcessingOrdersRecyclerViewAdapter;
+import com.example.logisticsfree.adapters.RecyclerViewBindingAdapter;
+import com.example.logisticsfree.databinding.FragmentHomeBinding;
+import com.example.logisticsfree.home.HomeFragment;
+import com.example.logisticsfree.models.HeadingModel;
+import com.example.logisticsfree.models.ItemModel;
+import com.example.logisticsfree.models.Order;
+import com.example.logisticsfree.presenters.ListItemsPresenter;
 import com.example.logisticsfree.services.TrackingService;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.SetOptions;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
-public class OrderList extends AppCompatActivity implements ProcessingOrdersRecyclerViewAdapter.ItemClickListener{
+public class OrderList extends AppCompatActivity {
     private static final int PERMISSIONS_REQUEST = 100;
-    ProcessingOrdersRecyclerViewAdapter adapter;
+    private static final String TAG = "OrderList";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,28 +64,18 @@ public class OrderList extends AppCompatActivity implements ProcessingOrdersRecy
 
         Toolbar myToolbar = findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
-        setTitle("Orders List");
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        ArrayList<String> animalNames = new ArrayList<>();
-        animalNames.add("Horse");
-        animalNames.add("Cow");
-        animalNames.add("Camel");
-        animalNames.add("Sheep");
-        animalNames.add("Goat");
+        setFragment(new ProcessingOrderListFragment());
 
-        RecyclerView recyclerView = findViewById(R.id.rvAnimals);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new ProcessingOrdersRecyclerViewAdapter(this, animalNames);
-        adapter.setClickListener(this);
-        recyclerView.setAdapter(adapter);
+    }
+    private void setFragment(Fragment fragment) {
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        fragmentTransaction.replace(R.id.processing_order_main_frame, fragment);
+        fragmentTransaction.commit();
     }
 
-    @Override
-    public void onItemClick(View view, int position) {
-        Toast.makeText(this, "You clicked " + adapter.getItem(position) + " on row number " + position, Toast.LENGTH_SHORT).show();
-    }
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_actionbar, menu);
@@ -80,13 +98,25 @@ public class OrderList extends AppCompatActivity implements ProcessingOrdersRecy
             }
         });
 
-        if (startTrackerService()) {
-            availableSwitch.setChecked(true);
-            Common.availabile = true;
-        }
-
         return true;
     }
+
+    //    not using
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_set_availability:
+                Log.d(TAG, "onOptionsItemsSelected: asdfasfd");
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    private void stopTrackerService() {
+        stopService(new Intent(this, TrackingService.class));
+        Toast.makeText(this, "GPS tracking disabled", Toast.LENGTH_LONG).show();
+    }
+
     private boolean startTrackerService() {
         //Check whether GPS tracking is enabled//
         LocationManager lm = (LocationManager) getSystemService(LOCATION_SERVICE);
@@ -104,6 +134,8 @@ public class OrderList extends AppCompatActivity implements ProcessingOrdersRecy
 
         if (permission == PackageManager.PERMISSION_GRANTED) {
             startService(new Intent(this, TrackingService.class));
+
+            Toast.makeText(this, "GPS tracking enabled", Toast.LENGTH_LONG).show();
             return true;
 //            finish();
         } else {
@@ -115,9 +147,4 @@ public class OrderList extends AppCompatActivity implements ProcessingOrdersRecy
             return false;
         }
     }
-    private void stopTrackerService() {
-        stopService(new Intent(this, TrackingService.class));
-        Toast.makeText(this, "GPS tracking disabled", Toast.LENGTH_LONG).show();
-    }
-
 }

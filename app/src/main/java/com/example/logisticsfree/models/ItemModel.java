@@ -1,21 +1,31 @@
 package com.example.logisticsfree.models;
 
-public class ItemModel {
+import android.util.Log;
 
+import java.util.Map;
+
+public class ItemModel {
+    private static String TAG = "ItemModel";
     public String item;
     public boolean expanded;
     public Order order;
+    public Invoice invoice;
 
     public ItemModel(Order order) {
         this.order = order;
+    }
+    public ItemModel(Invoice invoice) {
+        this.invoice = invoice;
     }
 
     private Order getOrder() {
         return this.order;
     }
+    private Invoice getInvoice() { return this.invoice; }
 
     @Override
     public boolean equals(Object o) {
+        Log.d(TAG, "equals: ");
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 

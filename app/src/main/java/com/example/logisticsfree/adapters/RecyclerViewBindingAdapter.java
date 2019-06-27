@@ -4,6 +4,7 @@ import android.databinding.DataBindingUtil;
 import android.databinding.ObservableList;
 import android.databinding.ViewDataBinding;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
@@ -11,6 +12,8 @@ import android.view.ViewGroup;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import static android.support.constraint.Constraints.TAG;
 
 public class RecyclerViewBindingAdapter extends RecyclerView.Adapter<RecyclerViewBindingAdapter.BindingViewHolder> {
     private ObservableList<AdapterDataItem> data;
@@ -22,6 +25,7 @@ public class RecyclerViewBindingAdapter extends RecyclerView.Adapter<RecyclerVie
 
     @Override
     public BindingViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        Log.d(TAG, "onCreateViewHolder: " + "Recycler");
         return new BindingViewHolder(DataBindingUtil.inflate(LayoutInflater.from(parent.getContext()), viewType, parent, false));
     }
 
@@ -42,9 +46,10 @@ public class RecyclerViewBindingAdapter extends RecyclerView.Adapter<RecyclerVie
 
     @Override
     public int getItemViewType(int position) {
+        Log.d(TAG, "getItemViewType: " + data.get(0).layoutId);
+        Log.d(TAG, "getItemViewType: " + data.get(0).idModelPairs);
         return data.get(position).layoutId;
     }
-
 
     private class ObservableListCallback extends ObservableList.OnListChangedCallback<ObservableList<RecyclerViewBindingAdapter.AdapterDataItem>> {
 
@@ -73,17 +78,15 @@ public class RecyclerViewBindingAdapter extends RecyclerView.Adapter<RecyclerVie
             notifyItemRangeRemoved(positionStart, itemCount);
         }
     }
-
-
-    public class BindingViewHolder extends RecyclerView.ViewHolder {
+    class BindingViewHolder extends RecyclerView.ViewHolder {
         private ViewDataBinding binding;
 
-        public BindingViewHolder(ViewDataBinding binding) {
+        BindingViewHolder(ViewDataBinding binding) {
             super(binding.getRoot());
             this.binding = binding;
         }
 
-        public void bind(int varId, Object obj) {
+        void bind(int varId, Object obj) {
             this.binding.setVariable(varId, obj);
         }
     }
@@ -99,6 +102,7 @@ public class RecyclerViewBindingAdapter extends RecyclerView.Adapter<RecyclerVie
         }
 
         public AdapterDataItem(int layoutId, Pair<Integer, Object>... idModelPairs) {
+            Log.d(TAG, "AdapterDataItem: " + "Recycler");
             this.layoutId = layoutId;
             this.idModelPairs = Arrays.asList(idModelPairs);
         }

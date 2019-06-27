@@ -1,77 +1,129 @@
 package com.example.logisticsfree.adapters;
 
-import android.content.Context;
+import android.databinding.DataBindingUtil;
+import android.databinding.ObservableList;
+import android.databinding.ViewDataBinding;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
+import android.util.Pair;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
-import com.example.logisticsfree.R;
-import com.example.logisticsfree.trip.OrderList;
-
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
-public class ProcessingOrdersRecyclerViewAdapter extends RecyclerView.Adapter<ProcessingOrdersRecyclerViewAdapter.ViewHolder> {
-    private List<String> mData;
-    private LayoutInflater mInflater;
-    private ItemClickListener mClickListener;
+import static android.support.constraint.Constraints.TAG;
 
-    // data is passed into the constructor
-    public ProcessingOrdersRecyclerViewAdapter(Context context, List<String> data) {
-        this.mInflater = LayoutInflater.from(context);
-        this.mData = data;
+public class ProcessingOrdersRecyclerViewAdapter extends RecyclerView.Adapter<ProcessingOrdersRecyclerViewAdapter.BindingViewHolder> {
+    private ObservableList<AdapterDataItem> data;
+
+    public ProcessingOrdersRecyclerViewAdapter(ObservableList<AdapterDataItem> data) {
+        this.data = data;
+        data.addOnListChangedCallback(new ObservableListCallback());
     }
 
-    // inflates the row layout from xml when needed
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = mInflater.inflate(R.layout.processing_order_list_item, parent, false);
-        return new ViewHolder(view);
+    public BindingViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        Log.d(TAG, "onCreateViewHolder: " + "Processing");
+        return new BindingViewHolder(DataBindingUtil.inflate(LayoutInflater.from(parent.getContext()), viewType, parent, false));
     }
 
-    // binds the data to the TextView in each row
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
-        String animal = mData.get(position);
-        holder.myTextView.setText(animal);
+    public void onBindViewHolder(ProcessingOrdersRecyclerViewAdapter.BindingViewHolder holder, int position) {
+        AdapterDataItem dataItem = data.get(position);
+        for (Pair<Integer, Object> idObjectPair : dataItem.idModelPairs) {
+            holder.bind(idObjectPair.first, idObjectPair.second);
+        }
+//        holder.bind();
+        holder.binding.executePendingBindings();
     }
 
-    // total number of rows
     @Override
     public int getItemCount() {
-        return mData.size();
+        return data.size();
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        return data.get(position).layoutId;
     }
 
 
-    // stores and recycles views as they are scrolled off screen
-    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        TextView myTextView;
+    private class ObservableListCallback extends ObservableList.OnListChangedCallback<ObservableList<ProcessingOrdersRecyclerViewAdapter.AdapterDataItem>> {
 
-        ViewHolder(View itemView) {
-            super(itemView);
-            myTextView = itemView.findViewById(R.id.tvAnimalName);
-            itemView.setOnClickListener(this);
+        @Override
+        public void onChanged(ObservableList<AdapterDataItem> sender) {
+            notifyDataSetChanged();
         }
 
         @Override
-        public void onClick(View view) {
-            if (mClickListener != null) mClickListener.onItemClick(view, getAdapterPosition());
+        public void onItemRangeChanged(ObservableList<AdapterDataItem> sender, int positionStart, int itemCount) {
+            notifyItemRangeChanged(positionStart, itemCount);
+        }
+
+        @Override
+        public void onItemRangeInserted(ObservableList<AdapterDataItem> sender, int positionStart, int itemCount) {
+            notifyItemRangeInserted(positionStart, itemCount);
+        }
+
+        @Override
+        public void onItemRangeMoved(ObservableList<AdapterDataItem> sender, int fromPosition, int toPosition, int itemCount) {
+            notifyDataSetChanged(); // not sure how to notify adapter of this event
+        }
+
+        @Override
+        public void onItemRangeRemoved(ObservableList<AdapterDataItem> sender, int positionStart, int itemCount) {
+            notifyItemRangeRemoved(positionStart, itemCount);
         }
     }
 
-    // convenience method for getting data at click position
-    public String getItem(int id) {
-        return mData.get(id);
+    public class BindingViewHolder extends RecyclerView.ViewHolder {
+        private ViewDataBinding binding;
+
+        public BindingViewHolder(ViewDataBinding binding) {
+            super(binding.getRoot());
+            this.binding = binding;
+        }
+
+        public void bind(int varId, Object obj) {
+            this.binding.setVariable(varId, obj);
+        }
     }
 
-    // allows clicks events to be caught
-    public void setClickListener(ItemClickListener itemClickListener) {
-        this.mClickListener = itemClickListener;
-    }
+    public static class AdapterDataItem {
+        public int layoutId;
+        public List<Pair<Integer, Object>> idModelPairs;
 
-    // parent activity will implement this method to respond to click events
-    public interface ItemClickListener {
-        void onItemClick(View view, int position);
+        public AdapterDataItem(int layoutId, int variableId, Object model) {
+            this.layoutId = layoutId;
+            this.idModelPairs = new ArrayList<>();
+            this.idModelPairs.add(new Pair<>(variableId, model));
+        }
+
+        public AdapterDataItem(int layoutId, Pair<Integer, Object>... idModelPairs) {
+            Log.d(TAG, "AdapterDataItem: " + layoutId);
+            this.layoutId = layoutId;
+            this.idModelPairs = Arrays.asList(idModelPairs);
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            AdapterDataItem that = (AdapterDataItem) o;
+
+            if (layoutId != that.layoutId) return false;
+            return idModelPairs != null ? idModelPairs.equals(that.idModelPairs) : that.idModelPairs == null;
+
+        }
+
+        @Override
+        public int hashCode() {
+            int result = layoutId;
+            result = 31 * result + (idModelPairs != null ? idModelPairs.hashCode() : 0);
+            return result;
+        }
     }
 }
