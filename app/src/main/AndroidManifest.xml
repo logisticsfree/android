@@ -18,7 +18,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
-        <activity android:name=".trip.InvoiceOrderListActivity"></activity>
+        <activity android:name=".trip.TripComplete"></activity>
+        <activity android:name=".trip.InvoiceOrderListActivity" />
         <activity android:name=".trip.TripProcessing" />
         <activity android:name=".LoadingBay" />
         <activity android:name=".WaitingActivity" />

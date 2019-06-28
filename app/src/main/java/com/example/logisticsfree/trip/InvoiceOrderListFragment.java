@@ -203,7 +203,7 @@ public class InvoiceOrderListFragment extends Fragment implements ListItemsPrese
                         Common.currentTrip.setTripID(documentSnapshot.getId());
                         if (finalInvoice) {
                             startActivity(new Intent(getActivity(),
-                                    HomeActivity.class));
+                                    TripComplete.class));
                             getActivity().finish();
                         } else {
                             startActivity(new Intent(getActivity(),

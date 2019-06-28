@@ -37,7 +37,10 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
@@ -45,6 +48,8 @@ import com.google.firebase.firestore.SetOptions;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
+import javax.annotation.Nullable;
 
 public class HomeFragment extends Fragment implements ListItemsPresenter {
     private final String TAG = "HomeFragment";
@@ -54,6 +59,7 @@ public class HomeFragment extends Fragment implements ListItemsPresenter {
     private FirebaseFirestore afs;
 
     private BroadcastReceiver broadcastReceiver;
+    private ListenerRegistration ordersListenerReg;
 
     public HomeFragment() {
         // Required empty public constructor
@@ -81,15 +87,10 @@ public class HomeFragment extends Fragment implements ListItemsPresenter {
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-
-    }
-
-    @Override
     public void onDestroy() {
         super.onDestroy();
         getActivity().unregisterReceiver(broadcastReceiver);
+        ordersListenerReg.remove();
     }
 
     @android.support.annotation.Nullable
@@ -105,25 +106,6 @@ public class HomeFragment extends Fragment implements ListItemsPresenter {
         mBinding.setItemAnimator(new DefaultItemAnimator());
 
         return mBinding.getRoot();
-    }
-
-    private void checkOrderProcessingStatus() {
-        afs.collection("drivers/" + mUser.getUid() + "/orders/")
-                .whereEqualTo("arrived", true).limit(1).get()
-                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                    @Override
-                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                        if (queryDocumentSnapshots.size() < 1) {
-                            checkForProcessingTrip();
-                        } else {
-                            Common.selectedOrder =
-                                    queryDocumentSnapshots.getDocuments().get(0).toObject(Order.class);
-                            Intent intent = new Intent(getContext(),
-                                    WaitingActivity.class);
-                            startActivity(intent);
-                        }
-                    }
-                });
     }
 
     private void checkForProcessingTrip() {
@@ -156,10 +138,11 @@ public class HomeFragment extends Fragment implements ListItemsPresenter {
     }
 
     private void loadFromFirestore() {
-        afs.collection("drivers/" + mUser.getUid() + "/orders/")
-                .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+        ordersListenerReg = afs.collection("drivers/" + mUser.getUid() +
+                "/orders/")
+                .addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
-            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+            public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
                 listItems.clear();
                 listItems.add(new RecyclerViewBindingAdapter.AdapterDataItem(R.layout.layout_listitem_heading,
                         new Pair<Integer, Object>(BR.headingModel,
@@ -249,10 +232,5 @@ public class HomeFragment extends Fragment implements ListItemsPresenter {
     @Override
     public void onLoadMoreClick() { // not used
         Toast.makeText(getActivity(), "loadMore clicked", Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
     }
 }
