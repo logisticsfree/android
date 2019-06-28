@@ -6,6 +6,7 @@ import com.example.logisticsfree.Remote.FCMClient;
 import com.example.logisticsfree.Remote.IFCMService;
 import com.example.logisticsfree.Remote.IGoogleAPI;
 import com.example.logisticsfree.models.Order;
+import com.example.logisticsfree.models.Trip;
 import com.example.logisticsfree.models.User;
 import com.example.logisticsfree.Remote.RetrofitClient;
 
@@ -18,6 +19,7 @@ public class Common {
     public static final String token_tbl = "Tokens";
     public static final int PICK_IMAGE_REQUEST = 9999;
     public static Order selectedOrder;
+    public static Trip currentTrip;
 
     public static User currentUser;
     public static boolean availabile = false;

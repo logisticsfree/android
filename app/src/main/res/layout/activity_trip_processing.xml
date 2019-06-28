@@ -1,0 +1,36 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.logisticsfree.trip.TripProcessing">
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/my_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/colorAccent"
+        android:elevation="4dp"
+        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
+    <fragment
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/map"
+        tools:context=".trip.TripProcessing"
+        android:layout_marginTop="?attr/actionBarSize"
+        android:name="com.google.android.gms.maps.SupportMapFragment">
+
+        <Button
+            android:id="@+id/btn_unload"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center|bottom"
+            android:background="@drawable/yellowloginbutton"
+            android:visibility="visible"
+            android:text="@string/unload"
+            android:padding="10dp"
+            android:layout_marginBottom="20dp"
+            android:paddingBottom="10dp"/>
+    </fragment>
+</RelativeLayout>

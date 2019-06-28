@@ -11,6 +11,7 @@ import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.IBinder;
+import android.os.Looper;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
@@ -53,6 +54,7 @@ public class TrackingService extends Service {
         super.onCreate();
 //        buildNotification();
 //        loginToFirebase();
+
         buildLocationCallback();
         requestLocationUpdates();
 
@@ -129,13 +131,8 @@ public class TrackingService extends Service {
     protected BroadcastReceiver stopReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-
 //Unregister the BroadcastReceiver when the notification is tapped//
-
             unregisterReceiver(stopReceiver);
-
-//Stop the Service//
-
             stopSelf();
         }
     };
@@ -163,7 +160,7 @@ public class TrackingService extends Service {
 
 //...then request location updates//
 
-            client.requestLocationUpdates(request, locationCallback, null);
+            client.requestLocationUpdates(request, locationCallback, Looper.getMainLooper());
         }
     }
 
@@ -172,6 +169,5 @@ public class TrackingService extends Service {
         super.onDestroy();
         client.removeLocationUpdates(locationCallback);
         stopSelf();
-//        stopReceiver.abortBroadcast();
     }
 }

@@ -15,22 +15,22 @@ import java.util.List;
 
 import static android.support.constraint.Constraints.TAG;
 
-public class RecyclerViewBindingAdapter extends RecyclerView.Adapter<RecyclerViewBindingAdapter.BindingViewHolder> {
+public class ProcessingOrdersRecyclerViewAdapter extends RecyclerView.Adapter<ProcessingOrdersRecyclerViewAdapter.BindingViewHolder> {
     private ObservableList<AdapterDataItem> data;
 
-    public RecyclerViewBindingAdapter(ObservableList<AdapterDataItem> data) {
+    public ProcessingOrdersRecyclerViewAdapter(ObservableList<AdapterDataItem> data) {
         this.data = data;
         data.addOnListChangedCallback(new ObservableListCallback());
     }
 
     @Override
     public BindingViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        Log.d(TAG, "onCreateViewHolder: " + "Recycler");
+        Log.d(TAG, "onCreateViewHolder: " + "Processing");
         return new BindingViewHolder(DataBindingUtil.inflate(LayoutInflater.from(parent.getContext()), viewType, parent, false));
     }
 
     @Override
-    public void onBindViewHolder(BindingViewHolder holder, int position) {
+    public void onBindViewHolder(ProcessingOrdersRecyclerViewAdapter.BindingViewHolder holder, int position) {
         AdapterDataItem dataItem = data.get(position);
         for (Pair<Integer, Object> idObjectPair : dataItem.idModelPairs) {
             holder.bind(idObjectPair.first, idObjectPair.second);
@@ -46,12 +46,11 @@ public class RecyclerViewBindingAdapter extends RecyclerView.Adapter<RecyclerVie
 
     @Override
     public int getItemViewType(int position) {
-        Log.d(TAG, "getItemViewType: " + data.get(0).layoutId);
-        Log.d(TAG, "getItemViewType: " + data.get(0).idModelPairs);
         return data.get(position).layoutId;
     }
 
-    private class ObservableListCallback extends ObservableList.OnListChangedCallback<ObservableList<RecyclerViewBindingAdapter.AdapterDataItem>> {
+
+    private class ObservableListCallback extends ObservableList.OnListChangedCallback<ObservableList<ProcessingOrdersRecyclerViewAdapter.AdapterDataItem>> {
 
         @Override
         public void onChanged(ObservableList<AdapterDataItem> sender) {
@@ -78,15 +77,16 @@ public class RecyclerViewBindingAdapter extends RecyclerView.Adapter<RecyclerVie
             notifyItemRangeRemoved(positionStart, itemCount);
         }
     }
-    class BindingViewHolder extends RecyclerView.ViewHolder {
+
+    public class BindingViewHolder extends RecyclerView.ViewHolder {
         private ViewDataBinding binding;
 
-        BindingViewHolder(ViewDataBinding binding) {
+        public BindingViewHolder(ViewDataBinding binding) {
             super(binding.getRoot());
             this.binding = binding;
         }
 
-        void bind(int varId, Object obj) {
+        public void bind(int varId, Object obj) {
             this.binding.setVariable(varId, obj);
         }
     }
@@ -102,7 +102,7 @@ public class RecyclerViewBindingAdapter extends RecyclerView.Adapter<RecyclerVie
         }
 
         public AdapterDataItem(int layoutId, Pair<Integer, Object>... idModelPairs) {
-            Log.d(TAG, "AdapterDataItem: " + "Recycler");
+            Log.d(TAG, "AdapterDataItem: " + layoutId);
             this.layoutId = layoutId;
             this.idModelPairs = Arrays.asList(idModelPairs);
         }
