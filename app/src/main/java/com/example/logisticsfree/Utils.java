@@ -3,7 +3,7 @@ package com.example.logisticsfree;
 import android.util.Log;
 import android.util.Pair;
 
-import com.example.logisticsfree.adapters.ProcessingOrdersRecyclerViewAdapter;
+import com.example.logisticsfree.adapters.InvoiceOrdersRecyclerViewAdapter;
 import com.example.logisticsfree.adapters.RecyclerViewBindingAdapter;
 import com.example.logisticsfree.models.ItemModel;
 import com.example.logisticsfree.presenters.ListItemsPresenter;
@@ -16,9 +16,9 @@ public class Utils {
                 .AdapterDataItem(R.layout.layout_listitem, new Pair<Integer, Object>(BR.itemModel, itemModel),
                 new Pair<Integer, Object>(BR.itemPresenter, presenter));
     }
-    public static ProcessingOrdersRecyclerViewAdapter.AdapterDataItem convertToOrder(ItemModel itemModel, ListItemsPresenter presenter){
+    public static InvoiceOrdersRecyclerViewAdapter.AdapterDataItem convertToOrder(ItemModel itemModel, ListItemsPresenter presenter){
         Log.d(TAG, "convertToOrder: ");
-        return new ProcessingOrdersRecyclerViewAdapter
+        return new InvoiceOrdersRecyclerViewAdapter
                 .AdapterDataItem(R.layout.processing_order_list_item, new Pair<Integer, Object>(BR.itemModel, itemModel),
                 new Pair<Integer, Object>(BR.itemPresenter, presenter));
     }

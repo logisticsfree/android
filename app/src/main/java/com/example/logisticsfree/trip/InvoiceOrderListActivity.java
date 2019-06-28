@@ -3,59 +3,29 @@ package com.example.logisticsfree.trip;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.databinding.DataBindingUtil;
-import android.databinding.ObservableArrayList;
-import android.databinding.ObservableList;
 import android.location.LocationManager;
-import android.support.annotation.NonNull;
+import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.util.Pair;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
 import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.Toast;
 
-import com.example.logisticsfree.BR;
 import com.example.logisticsfree.Common.Common;
-import com.example.logisticsfree.DriverTracking;
 import com.example.logisticsfree.R;
-import com.example.logisticsfree.Utils;
-import com.example.logisticsfree.adapters.ProcessingOrdersRecyclerViewAdapter;
-import com.example.logisticsfree.adapters.RecyclerViewBindingAdapter;
-import com.example.logisticsfree.databinding.FragmentHomeBinding;
-import com.example.logisticsfree.home.HomeFragment;
-import com.example.logisticsfree.models.HeadingModel;
-import com.example.logisticsfree.models.ItemModel;
-import com.example.logisticsfree.models.Order;
-import com.example.logisticsfree.presenters.ListItemsPresenter;
 import com.example.logisticsfree.services.TrackingService;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.SetOptions;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
-public class OrderList extends AppCompatActivity {
+public class InvoiceOrderListActivity extends AppCompatActivity {
     private static final int PERMISSIONS_REQUEST = 100;
-    private static final String TAG = "OrderList";
+    private static final String TAG = "InvoiceOrderListActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,11 +37,13 @@ public class OrderList extends AppCompatActivity {
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        setFragment(new ProcessingOrderListFragment());
+        setFragment(new InvoiceOrderListFragment());
 
     }
+
     private void setFragment(Fragment fragment) {
-        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        FragmentTransaction fragmentTransaction =
+                getSupportFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.processing_order_main_frame, fragment);
         fragmentTransaction.commit();
     }
@@ -80,12 +52,14 @@ public class OrderList extends AppCompatActivity {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_actionbar, menu);
 
-        final Switch availableSwitch = menu.findItem(R.id.action_set_availability).getActionView().findViewById(R.id.switchForActionBar);
+        final Switch availableSwitch =
+                menu.findItem(R.id.action_set_availability).getActionView().findViewById(R.id.switchForActionBar);
 
         assert availableSwitch != null;
         availableSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+            public void onCheckedChanged(CompoundButton buttonView,
+                                         boolean isChecked) {
                 if (isChecked) {
                     if (!startTrackerService()) {
                         availableSwitch.setChecked(false);
@@ -119,9 +93,11 @@ public class OrderList extends AppCompatActivity {
 
     private boolean startTrackerService() {
         //Check whether GPS tracking is enabled//
-        LocationManager lm = (LocationManager) getSystemService(LOCATION_SERVICE);
+        LocationManager lm =
+                (LocationManager) getSystemService(LOCATION_SERVICE);
         if (!lm.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-            Toast.makeText(this, "Please enable Location Service", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "Please enable Location Service",
+                    Toast.LENGTH_LONG).show();
 //            finish();
             return false;
         }
@@ -130,17 +106,18 @@ public class OrderList extends AppCompatActivity {
         int permission = ContextCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_FINE_LOCATION);
 
-        //If the location permission has been granted, then start the TrackerService//
+        //If the location permission has been granted, then start the
+        // TrackerService//
 
         if (permission == PackageManager.PERMISSION_GRANTED) {
             startService(new Intent(this, TrackingService.class));
 
-            Toast.makeText(this, "GPS tracking enabled", Toast.LENGTH_LONG).show();
             return true;
 //            finish();
         } else {
 
-//If the app doesn’t currently have access to the user’s location, then request access//
+//If the app doesn’t currently have access to the user’s location, then
+// request access//
             ActivityCompat.requestPermissions(this,
                     new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                     PERMISSIONS_REQUEST);

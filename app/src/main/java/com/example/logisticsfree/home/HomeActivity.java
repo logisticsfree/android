@@ -64,7 +64,8 @@ public class HomeActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<InstanceIdResult> task) {
                         if (!task.isSuccessful()) {
-                            Log.w(TAG, "getInstanceId failed", task.getException());
+                            Log.w(TAG, "getInstanceId failed",
+                                    task.getException());
                             return;
                         }
 
@@ -76,6 +77,11 @@ public class HomeActivity extends AppCompatActivity {
 
         Toolbar myToolbar = findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
+        setTitle("Orders");
+        getSupportActionBar().setHomeButtonEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        startService(new Intent(this, TrackingService.class));
 
         mMainFrame = findViewById(R.id.main_frame);
         mMainNav = findViewById(R.id.main_nav);
@@ -110,7 +116,8 @@ public class HomeActivity extends AppCompatActivity {
             }
 
             private void setFragment(Fragment fragment) {
-                FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+                FragmentTransaction fragmentTransaction =
+                        getSupportFragmentManager().beginTransaction();
                 fragmentTransaction.replace(R.id.main_frame, fragment);
                 fragmentTransaction.commit();
             }
@@ -119,10 +126,11 @@ public class HomeActivity extends AppCompatActivity {
         mMainNav.setSelectedItemId(R.id.nav_home);
 
     }
+
     private void updateTokenToServer(String refreshedToken) {
 
         Token token = new Token(refreshedToken);
-        if(FirebaseAuth.getInstance().getCurrentUser()!= null){
+        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
             mDatabase.collection("tokens").document(mUser.getUid()).set(token);
         }
     }
@@ -131,12 +139,14 @@ public class HomeActivity extends AppCompatActivity {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_actionbar, menu);
 
-        final Switch availableSwitch = menu.findItem(R.id.action_set_availability).getActionView().findViewById(R.id.switchForActionBar);
+        final Switch availableSwitch =
+                menu.findItem(R.id.action_set_availability).getActionView().findViewById(R.id.switchForActionBar);
 
         assert availableSwitch != null;
         availableSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+            public void onCheckedChanged(CompoundButton buttonView,
+                                         boolean isChecked) {
                 if (isChecked) {
                     if (!startTrackerService()) {
                         availableSwitch.setChecked(false);
@@ -148,6 +158,11 @@ public class HomeActivity extends AppCompatActivity {
                 }
             }
         });
+
+        if (startTrackerService()) {
+            availableSwitch.setChecked(true);
+            Common.availabile = true;
+        }
 
         return true;
     }
@@ -170,9 +185,11 @@ public class HomeActivity extends AppCompatActivity {
 
     private boolean startTrackerService() {
         //Check whether GPS tracking is enabled//
-        LocationManager lm = (LocationManager) getSystemService(LOCATION_SERVICE);
+        LocationManager lm =
+                (LocationManager) getSystemService(LOCATION_SERVICE);
         if (!lm.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-            Toast.makeText(this, "Please enable Location Service", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "Please enable Location Service",
+                    Toast.LENGTH_LONG).show();
 //            finish();
             return false;
         }
@@ -181,17 +198,20 @@ public class HomeActivity extends AppCompatActivity {
         int permission = ContextCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_FINE_LOCATION);
 
-        //If the location permission has been granted, then start the TrackerService//
+        //If the location permission has been granted, then start the
+        // TrackerService//
 
         if (permission == PackageManager.PERMISSION_GRANTED) {
             startService(new Intent(this, TrackingService.class));
 
-            Toast.makeText(this, "GPS tracking enabled", Toast.LENGTH_LONG).show();
+//            Toast.makeText(this, "GPS tracking enabled", Toast.LENGTH_LONG)
+//            .show();
             return true;
 //            finish();
         } else {
 
-//If the app doesn’t currently have access to the user’s location, then request access//
+//If the app doesn’t currently have access to the user’s location, then
+// request access//
             ActivityCompat.requestPermissions(this,
                     new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                     PERMISSIONS_REQUEST);
