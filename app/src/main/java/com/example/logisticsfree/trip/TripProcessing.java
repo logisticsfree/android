@@ -90,6 +90,7 @@ public class TripProcessing extends AppCompatActivity implements OnMapReadyCallb
             public void onClick(View v) {
                 Log.d(TAG, "onClick: ");
                 startActivity(new Intent(getApplicationContext(), OrderList.class));
+                finish();
             }
         });
     }
@@ -130,7 +131,9 @@ public class TripProcessing extends AppCompatActivity implements OnMapReadyCallb
                         try {
                             DateTime now = new DateTime();
                             String origin =  lastLocation[0] + ", " + lastLocation[1];
-                            String destination = getCoordinates()[0] + ", " + getCoordinates()[1];
+                            double[] dest = getCoordinates();
+                            String destination = dest[0] + ", " + dest[1];
+                            Log.d(TAG, "run: " + destination);
                             DirectionsResult result = DirectionsApi.newRequest(getGeoContext())
                                     .mode(TravelMode.DRIVING)
                                     .origin(origin)
@@ -194,26 +197,43 @@ public class TripProcessing extends AppCompatActivity implements OnMapReadyCallb
         JSONObject ordersJson = new JSONObject(ordersMap);
 
         int noOfOrders = Iterators.size(ordersJson.keys());
-        double[][] dists = new double[2][noOfOrders];
-        int nextDistIndex = 0;
-        Log.d(TAG, "getCoordinates: " + ordersJson.keys());
+        double[][] dists = new double[noOfOrders][2];
+        int nextDistIndex = noOfOrders;
         for (Iterator<String> it = ordersJson.keys(); it.hasNext(); ) {
             String key = it.next();
-
+            Log.d(TAG, "getCoordinates: " + key);
             try {
                 HashMap order = (HashMap) ordersJson.get(key);
                 HashMap dist = (HashMap) order.get("distributor");
                 int seqNo = (int) (long) order.get("seqNo");
-                if (order.get("completed") != null)
-                    if (! (boolean) order.get("completed") && seqNo >= nextDistIndex) {
+
+                Log.d(TAG, "getCoordinates:1 " + key + " - " + seqNo + " - " + dist);
+
+                if (order.get("completed") != null) {
+                    Log.d(" ", "getCoordinates:2 " + key + " - " + seqNo + " - " + nextDistIndex );
+
+                    if (!(boolean) order.get("completed")) {
+                        Log.d(TAG, "getCoordinates:3 " + key + " - " + seqNo + " - " + nextDistIndex);
+                        if (seqNo <= nextDistIndex) {
+                            Log.d(TAG, "getCoordinates:3 " + key + " - " + seqNo + " - " + nextDistIndex);
+
+                            nextDistIndex = seqNo;
+                        }
+                    }
+                } else {
+                    if (seqNo <= nextDistIndex) {
+                        Log.d(TAG, "getCoordinates:4 " + key + " - " + seqNo + " - " + nextDistIndex);
+
                         nextDistIndex = seqNo;
                     }
+                }
+
                 dists[seqNo] = new double[] {(double) dist.get("latitude"), (double) dist.get("longitude")};
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         }
-
+        Log.d(TAG, "getCoordinates:5 " + nextDistIndex);
         return dists[nextDistIndex];
     }
 

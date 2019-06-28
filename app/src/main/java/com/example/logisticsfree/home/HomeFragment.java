@@ -23,6 +23,7 @@ import com.example.logisticsfree.BR;
 import com.example.logisticsfree.Common.Common;
 import com.example.logisticsfree.DriverTracking;
 import com.example.logisticsfree.R;
+import com.example.logisticsfree.models.Invoice;
 import com.example.logisticsfree.trip.TripProcessing;
 import com.example.logisticsfree.Utils;
 import com.example.logisticsfree.WaitingActivity;
@@ -37,9 +38,11 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.annotations.Nullable;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
@@ -56,6 +59,7 @@ public class HomeFragment extends Fragment implements ListItemsPresenter {
     private FirebaseFirestore afs;
 
     private BroadcastReceiver broadcastReceiver;
+    ListenerRegistration currentTripReg;
 
     public HomeFragment() {
         // Required empty public constructor
@@ -67,7 +71,7 @@ public class HomeFragment extends Fragment implements ListItemsPresenter {
         mUser = FirebaseAuth.getInstance().getCurrentUser();
         afs = FirebaseFirestore.getInstance();
         loadFromFirestore();
-        checkOrderProcessingStatus();
+//        checkOrderProcessingStatus();
 
         getActivity().setTitle("Orders");
 
@@ -125,21 +129,27 @@ public class HomeFragment extends Fragment implements ListItemsPresenter {
     }
 
     private void checkForProcessingTrip() {
-        afs.collection("trips")
-                .whereEqualTo("driverID", mUser.getUid()).limit(1).get()
-                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+        Log.d(TAG, "checkForProcessingTrip: ");
+//        need to run a query because we don't know the companyID of the order
+        currentTripReg = afs.collection("trips/").whereEqualTo("driverID", mUser.getUid())
+                .whereEqualTo("active", true)
+                .limit(1)
+                .addSnapshotListener(new EventListener<QuerySnapshot>() {
                     @Override
-                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                        Log.d(TAG, "onSuccess: " + queryDocumentSnapshots.size());
-                        if (queryDocumentSnapshots.size() < 1) {
-                            return;
-                        } else {
-                            Common.currentTrip = queryDocumentSnapshots.getDocuments().get(0).toObject(Trip.class);
-                            Log.d(TAG, "onSuccess: " + queryDocumentSnapshots.getDocuments());
+                    public void onEvent(@javax.annotation.Nullable QuerySnapshot queryDocumentSnapshots, @javax.annotation.Nullable FirebaseFirestoreException e) {
+                        for (DocumentSnapshot doc: queryDocumentSnapshots) {
+                            if (doc.exists()) {
+                                Trip trip = doc.toObject(Trip.class);
+                                trip.setTripID(doc.getId());
+                                Log.d(TAG, "onEvent:1 " + doc.getId());
+                                Common.currentTrip = trip;
 
-                            Intent intent = new Intent(getContext(), TripProcessing.class);
-                            startActivity(intent);
-                            getActivity().finish();
+                                if (trip.getActive()) {
+                                    Intent intent = new Intent(getContext(), TripProcessing.class);
+                                    startActivity(intent);
+                                    getActivity().finish();
+                                }
+                            }
                         }
                     }
                 });
@@ -149,6 +159,7 @@ public class HomeFragment extends Fragment implements ListItemsPresenter {
         afs.collection("drivers/" + mUser.getUid() + "/orders/").addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot snap, @Nullable FirebaseFirestoreException e) {
+                Log.d(TAG, "onEvent: ");
                 if (e != null) {
                     Log.w(TAG, "Listen failed.", e);
                     return;
@@ -160,12 +171,20 @@ public class HomeFragment extends Fragment implements ListItemsPresenter {
                 List<RecyclerViewBindingAdapter.AdapterDataItem> list = new ArrayList<>();
                 for (QueryDocumentSnapshot doc : snap) {
                     if (doc.getBoolean("arrived") != null) { // if arrived is not null and
-                        if (!doc.getBoolean("arrived")) // it's set to false
+                        if (!doc.getBoolean("arrived")) {   // it's set to false
                             addToList(list, doc);
+                        } else {
+                            Common.selectedOrder = doc.toObject(Order.class);
+                            Intent intent = new Intent(getContext(), WaitingActivity.class);
+                            startActivity(intent);
+                            getActivity().finish();
+                            return;
+                        }
                     } else {    // or arrived is not set
                         addToList(list, doc);
                     }
                 }
+                checkForProcessingTrip();
                 listItems.addAll(list);
             }
         });
@@ -224,5 +243,11 @@ public class HomeFragment extends Fragment implements ListItemsPresenter {
     @Override
     public void onLoadMoreClick() { // not used
         Toast.makeText(getActivity(), "loadMore clicked", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        currentTripReg.remove();
     }
 }

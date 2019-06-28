@@ -16,7 +16,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 
-import com.example.logisticsfree.home.home;
+import com.example.logisticsfree.home.HomeActivity;
 import com.example.logisticsfree.setting.ProfileActivity;
 import com.example.logisticsfree.signup.SignupActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -75,7 +75,7 @@ public class MainActivity extends AppCompatActivity {
                         public void onComplete(@NonNull Task<DocumentSnapshot> task) {
 //                            Log.d(TAG, task.getResult().getBoolean("enabled") + " !");
                             if (task.getResult().getBoolean("enabled")) {
-                                startActivity(new Intent(MainActivity.this, home.class));
+                                startActivity(new Intent(MainActivity.this, HomeActivity.class));
                                 finish();
                             } else {
                                 showInstructionsButton.setVisibility(View.VISIBLE);
@@ -147,7 +147,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void gotoHome(View view) {
         //Toast.makeText(selfActivity, "you clicked", Toast.LENGTH_SHORT).show();
-        startActivity(new Intent(this, home.class));
+        startActivity(new Intent(this, HomeActivity.class));
     }
 
     public void showDialog(View view) {

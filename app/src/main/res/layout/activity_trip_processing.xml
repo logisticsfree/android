@@ -28,7 +28,7 @@
             android:layout_gravity="center|bottom"
             android:background="@drawable/yellowloginbutton"
             android:visibility="visible"
-            android:text="@string/arrived"
+            android:text="@string/unload"
             android:padding="10dp"
             android:layout_marginBottom="20dp"
             android:paddingBottom="10dp"/>

@@ -42,7 +42,7 @@
         </service>
 
         <activity android:name=".ResetPasswordActivity" />
-        <activity android:name=".home.home" />
+        <activity android:name=".home.HomeActivity" />
         <activity android:name=".signup.SignupActivity3" />
         <activity android:name=".signup.SignupActivity2" />
         <activity

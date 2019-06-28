@@ -34,7 +34,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
 
-public class home extends AppCompatActivity {
+public class HomeActivity extends AppCompatActivity {
     private final String TAG = "HomeAcivity";
     private BottomNavigationView mMainNav;
     private FrameLayout mMainFrame;
