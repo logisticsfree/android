@@ -84,11 +84,11 @@ public class CustomerCall extends AppCompatActivity {
         btnAccept.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(CustomerCall.this, DriverTracking.class);
-                intent.putExtra("lat", lat);
-                intent.putExtra("lng", lng);
-                intent.putExtra("customerId", customerId);
-
+//                Intent intent = new Intent(CustomerCall.this, DriverTracking.class);
+//                intent.putExtra("lat", lat);
+//                intent.putExtra("lng", lng);
+//                intent.putExtra("customerId", customerId);
+//
 //                ng app will create the order Document at /order-requests/CompnayID/order-requests/TruckID
 //                after accept the order move it(orderDocument)
 //                from  /order-requests/companyID/order-requests/TruckID
