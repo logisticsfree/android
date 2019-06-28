@@ -1,7 +1,6 @@
 package com.example.logisticsfree;
 
 import android.Manifest;
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -15,7 +14,6 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.example.logisticsfree.Common.Common;
-import com.example.logisticsfree.Common.Utils;
 import com.example.logisticsfree.models.Order;
 import com.firebase.geofire.GeoFire;
 import com.firebase.geofire.GeoLocation;
@@ -31,12 +29,10 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
-import com.google.common.collect.Iterators;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.SetOptions;
 import com.google.gson.Gson;
@@ -49,21 +45,18 @@ import com.google.maps.model.DirectionsResult;
 import com.google.maps.model.TravelMode;
 
 import org.joda.time.DateTime;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 
-public class DriverTracking extends AppCompatActivity implements OnMapReadyCallback, GoogleMap.OnMyLocationButtonClickListener,
+public class DriverTracking extends AppCompatActivity implements OnMapReadyCallback,
+        GoogleMap.OnMyLocationButtonClickListener,
         GoogleMap.OnMyLocationClickListener {
 
     private final String TAG = "MapActivity";
@@ -115,7 +108,8 @@ public class DriverTracking extends AppCompatActivity implements OnMapReadyCallb
         mMap = googleMap;
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION},
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION,
+                            Manifest.permission.ACCESS_COARSE_LOCATION},
                     MY_PERMISSIONS_REQUEST_FINE_LOCATION);
             //    ActivityCompat#requestPermissions
             // here to request the missing permissions, and then overriding
@@ -136,10 +130,9 @@ public class DriverTracking extends AppCompatActivity implements OnMapReadyCallb
             public void run() {
                 try {
                     DateTime now = new DateTime();
-//                    String warehouse = (String) getCoordinates().get("warehouse");
-                    String origin =  Common.mLastLocation.getLatitude() + ", " + Common.mLastLocation.getLongitude();
+                    String origin =
+                            Common.mLastLocation.getLatitude() + ", " + Common.mLastLocation.getLongitude();
                     String destination = (String) getCoordinates().get("warehouse");
-                    String[] waypoints = (String[]) getCoordinates().get("waypoints");
                     DirectionsResult result = DirectionsApi.newRequest(getGeoContext())
                             .mode(TravelMode.DRIVING)
                             .origin(origin)
@@ -189,10 +182,12 @@ public class DriverTracking extends AppCompatActivity implements OnMapReadyCallb
         });
 
 //        when driver arrived (close: 500m) to warehouse display 'arrived' button
-        GeoFire geoFire = new GeoFire(FirebaseDatabase.getInstance().getReference("/driver-locations"));
+        GeoFire geoFire = new GeoFire(FirebaseDatabase.getInstance().getReference("/driver" +
+                "-locations"));
         HashMap warehouseMap = (HashMap) currentOrder.getOrdersJson().get("warehouse");
 
-        GeoQuery geoQuery = geoFire.queryAtLocation(new GeoLocation((double)warehouseMap.get("latitude"), (double) warehouseMap.get("longitude")), 0.5f);
+        GeoQuery geoQuery = geoFire.queryAtLocation(new GeoLocation((double) warehouseMap.get(
+                "latitude"), (double) warehouseMap.get("longitude")), 0.5f);
         geoQuery.addGeoQueryEventListener(new GeoQueryEventListener() {
             @Override
             public void onKeyEntered(String key, GeoLocation location) {
@@ -206,61 +201,50 @@ public class DriverTracking extends AppCompatActivity implements OnMapReadyCallb
             }
 
             @Override
-            public void onKeyMoved(String key, GeoLocation location) { }
+            public void onKeyMoved(String key, GeoLocation location) {
+            }
 
             @Override
-            public void onGeoQueryReady() { }
+            public void onGeoQueryReady() {
+            }
 
             @Override
-            public void onGeoQueryError(DatabaseError error) { }
+            public void onGeoQueryError(DatabaseError error) {
+            }
         });
     }
 
     private void setAsArrived() {
         FirebaseFirestore fs = FirebaseFirestore.getInstance();
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        String orderPath = "drivers/" + user.getUid() + "/orders/" + currentOrder.getCompanyID();
+        String driverOrderPath =
+                "drivers/" + user.getUid() + "/orders/" + currentOrder.getCompanyID();
+        String orderedTruckPath = "ordered-trucks/" + currentOrder.getCompanyID() + "/ordered" +
+                "-trucks/" + user.getUid();
 
         Map<String, Object> data = new HashMap<>();
         data.put("arrived", true);
 
 //      set drivers/truckID/orders/companyID->arrived: true
-//        then sync function will copy it to ordered-trucks collection
+//        and ordered-trucks/companyID/ordered-trucks/truckID
+//        not using firebase function inverseSync, bc it causes infinite cycles
 //        ng app should handle it from their
-        fs.document(orderPath).set(data, SetOptions.merge());
+        fs.document(driverOrderPath).set(data, SetOptions.merge());
+        fs.document(orderedTruckPath).set(data, SetOptions.merge());
 
     }
 
     private HashMap<String, Serializable> getCoordinates() {
         HashMap warehouseMap = (HashMap) currentOrder.getOrdersJson().get("warehouse");
         String warehouse = warehouseMap.get("latitude") + ", " + warehouseMap.get("longitude");
-//
-//        HashMap ordersMap = (HashMap) currentOrder.getOrdersJson().get("orders");
-//        JSONObject ordersJson = new JSONObject(ordersMap);
-//
-//        int noOfOrders = Iterators.size(ordersJson.keys());
-//        String[] orders = new String[noOfOrders];
-//
-//        for (Iterator<String> it = ordersJson.keys(); it.hasNext(); ) {
-//            String key = it.next();
-//
-//            try {
-//                HashMap order = (HashMap) ordersJson.get(key);
-//                HashMap dist = (HashMap) order.get("distributor");
-//                orders[(int) (long) order.get("seqNo")] = dist.get("latitude") + "," + dist.get("longitude");
-//            } catch (JSONException e) {
-//                e.printStackTrace();
-//            }
-//        }
 
         HashMap<String, java.io.Serializable> coordinates = new HashMap<>();
         coordinates.put("warehouse", warehouse);
-//        coordinates.put("destination", orders[noOfOrders - 1]);
-//        coordinates.put("waypoints", Arrays.copyOf(orders, noOfOrders - 1));
         return coordinates;
     }
 
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
         switch (requestCode) {
             case MY_PERMISSIONS_REQUEST_FINE_LOCATION: {
                 // If request is cancelled, the result arrays are empty.
@@ -278,9 +262,9 @@ public class DriverTracking extends AppCompatActivity implements OnMapReadyCallb
         GeoApiContext geoApiContext = new GeoApiContext();
         return geoApiContext.setQueryRateLimit(3)
                 .setApiKey(getString(R.string.directionsApiKey))
-                .setConnectTimeout(1, TimeUnit.SECONDS)
-                .setReadTimeout(1, TimeUnit.SECONDS)
-                .setWriteTimeout(1, TimeUnit.SECONDS);
+                .setConnectTimeout(5, TimeUnit.SECONDS)
+                .setReadTimeout(5, TimeUnit.SECONDS)
+                .setWriteTimeout(5, TimeUnit.SECONDS);
     }
 
     private List<Marker> addMarkersToMap(DirectionsResult results, GoogleMap mMap) {
@@ -304,7 +288,8 @@ public class DriverTracking extends AppCompatActivity implements OnMapReadyCallb
     }
 
     private void addPolyline(DirectionsResult result, GoogleMap mMap) {
-        List<LatLng> decodedPath = PolyUtil.decode(result.routes[0].overviewPolyline.getEncodedPath());
+        List<LatLng> decodedPath =
+                PolyUtil.decode(result.routes[0].overviewPolyline.getEncodedPath());
         mMap.addPolyline(new PolylineOptions().addAll(decodedPath));
     }
 

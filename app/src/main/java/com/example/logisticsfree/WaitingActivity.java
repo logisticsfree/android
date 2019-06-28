@@ -56,6 +56,9 @@ public class WaitingActivity extends AppCompatActivity {
         registration = fs.document(orderPath).addSnapshotListener(new EventListener<DocumentSnapshot>() {
             @Override
             public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
+                if (e != null || !documentSnapshot.exists() ) {
+                    return;
+                }
                 Map<String, Object> order = documentSnapshot.getData();
                 if (order.containsKey("bay")) {
                     Map bay = (HashMap) order.get("bay");
