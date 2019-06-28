@@ -1,11 +1,10 @@
 package com.example.logisticsfree;
 
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
@@ -43,11 +42,10 @@ public class LoadingBay extends AppCompatActivity {
         setSupportActionBar(myToolbar);
         myToolbar.setTitle("Orders");
         myToolbar.showOverflowMenu();
-        Log.d(TAG, "onCreate: " + myToolbar.getTitle());
 
         Button btnStartTrip = findViewById(R.id.btnStartTrip);
 
-        String[][] myData = new String[][] {};
+        String[][] myData = new String[][]{};
 
         final TableDataAdapter<String[]> myDataAdapter =
                 new SimpleTableDataAdapter(this, myData);
@@ -66,18 +64,23 @@ public class LoadingBay extends AppCompatActivity {
 
         FirebaseFirestore fs = FirebaseFirestore.getInstance();
         String mUID = FirebaseAuth.getInstance().getUid();
-        String path = "/ordered-trucks/" + Common.selectedOrder.getCompanyID() + "/ordered-trucks/" + mUID;
+        String path =
+                "/ordered-trucks/" + Common.selectedOrder.getCompanyID() +
+                        "/ordered-trucks/" + mUID;
         fs.document(path).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 Map<String, Object> snap = task.getResult().getData();
                 Map orders = (Map) snap.get("orders");
 
-                for ( Object order : orders.values()) {
+                for (Object order : orders.values()) {
                     String invoiceNo = (String) ((Map) order).get("invoice");
                     Map distributor = (Map) ((Map) order).get("distributor");
-                    String address = (String) distributor.get("name");    //  TODO: change to actually address (should add it in Firebase)
-                    myDataAdapter.getData().add(new String[]{invoiceNo, address});
+                    String address = (String) distributor.get("name");    //
+                    // TODO: change to actually address (should add a field
+                    //  in Firebase)
+                    myDataAdapter.getData().add(new String[]{invoiceNo,
+                            address});
                 }
 
                 myDataAdapter.notifyDataSetChanged();
@@ -89,13 +92,16 @@ public class LoadingBay extends AppCompatActivity {
             public void onClick(View v) {
                 FirebaseFirestore fs = FirebaseFirestore.getInstance();
                 String mUID = FirebaseAuth.getInstance().getUid();
-                String from = "/ordered-trucks/" + Common.selectedOrder.getCompanyID() + "/ordered-trucks/" + mUID;
+                String from =
+                        "/ordered-trucks/" + Common.selectedOrder.getCompanyID() + "/ordered-trucks/" + mUID;
                 String to = "/trips/";
 
                 final DocumentReference fromDoc = fs.document(from);
                 final DocumentReference toDoc = fs.collection(to).document();
-                final DocumentReference fromDocDriver = fs.document("/drivers/" + mUID + "/orders/" + Common.selectedOrder.getCompanyID());
-                final DocumentReference toDocDriver = fs.document("/drivers/" + mUID + "/trips/" + Common.selectedOrder.getCompanyID());
+                final DocumentReference fromDocDriver = fs.document("/drivers" +
+                        "/" + mUID + "/orders/" + Common.selectedOrder.getCompanyID());
+                final DocumentReference toDocDriver =
+                        fs.document("/drivers/" + mUID + "/trips/" + Common.selectedOrder.getCompanyID());
 
                 Map<String, Object> data = new HashMap<>();
                 data.put("driverID", mUID);
@@ -108,9 +114,14 @@ public class LoadingBay extends AppCompatActivity {
                         fromDoc.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                             @Override
                             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                Common.currentTrip = task.getResult().toObject(Trip.class);
-                                Utils.moveFirestoreDocument(fromDoc , toDoc);
-                                Utils.moveFirestoreDocument(fromDocDriver, toDocDriver);
+                                Common.currentTrip =
+                                        task.getResult().toObject(Trip.class);
+                                Common.currentTrip.setTripID(toDoc.getId());
+
+                                Utils.moveFirestoreDocument(fromDoc, toDoc);
+                                Utils.moveFirestoreDocument(fromDocDriver,
+                                        toDocDriver);
+
                                 startActivity(new Intent(getApplicationContext(), TripProcessing.class));
                                 finish();
                             }

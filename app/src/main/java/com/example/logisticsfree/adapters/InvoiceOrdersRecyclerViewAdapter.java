@@ -15,22 +15,23 @@ import java.util.List;
 
 import static android.support.constraint.Constraints.TAG;
 
-public class ProcessingOrdersRecyclerViewAdapter extends RecyclerView.Adapter<ProcessingOrdersRecyclerViewAdapter.BindingViewHolder> {
+public class InvoiceOrdersRecyclerViewAdapter extends RecyclerView.Adapter<InvoiceOrdersRecyclerViewAdapter.BindingViewHolder> {
     private ObservableList<AdapterDataItem> data;
 
-    public ProcessingOrdersRecyclerViewAdapter(ObservableList<AdapterDataItem> data) {
+    public InvoiceOrdersRecyclerViewAdapter(ObservableList<AdapterDataItem> data) {
         this.data = data;
         data.addOnListChangedCallback(new ObservableListCallback());
     }
 
     @Override
-    public BindingViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public BindingViewHolder onCreateViewHolder(ViewGroup parent,
+                                                int viewType) {
         Log.d(TAG, "onCreateViewHolder: " + "Processing");
         return new BindingViewHolder(DataBindingUtil.inflate(LayoutInflater.from(parent.getContext()), viewType, parent, false));
     }
 
     @Override
-    public void onBindViewHolder(ProcessingOrdersRecyclerViewAdapter.BindingViewHolder holder, int position) {
+    public void onBindViewHolder(InvoiceOrdersRecyclerViewAdapter.BindingViewHolder holder, int position) {
         AdapterDataItem dataItem = data.get(position);
         for (Pair<Integer, Object> idObjectPair : dataItem.idModelPairs) {
             holder.bind(idObjectPair.first, idObjectPair.second);
@@ -50,7 +51,7 @@ public class ProcessingOrdersRecyclerViewAdapter extends RecyclerView.Adapter<Pr
     }
 
 
-    private class ObservableListCallback extends ObservableList.OnListChangedCallback<ObservableList<ProcessingOrdersRecyclerViewAdapter.AdapterDataItem>> {
+    private class ObservableListCallback extends ObservableList.OnListChangedCallback<ObservableList<InvoiceOrdersRecyclerViewAdapter.AdapterDataItem>> {
 
         @Override
         public void onChanged(ObservableList<AdapterDataItem> sender) {
@@ -58,7 +59,8 @@ public class ProcessingOrdersRecyclerViewAdapter extends RecyclerView.Adapter<Pr
         }
 
         @Override
-        public void onItemRangeChanged(ObservableList<AdapterDataItem> sender, int positionStart, int itemCount) {
+        public void onItemRangeChanged(ObservableList<AdapterDataItem> sender
+                , int positionStart, int itemCount) {
             notifyItemRangeChanged(positionStart, itemCount);
         }
 
@@ -68,12 +70,16 @@ public class ProcessingOrdersRecyclerViewAdapter extends RecyclerView.Adapter<Pr
         }
 
         @Override
-        public void onItemRangeMoved(ObservableList<AdapterDataItem> sender, int fromPosition, int toPosition, int itemCount) {
-            notifyDataSetChanged(); // not sure how to notify adapter of this event
+        public void onItemRangeMoved(ObservableList<AdapterDataItem> sender,
+                                     int fromPosition, int toPosition,
+                                     int itemCount) {
+            notifyDataSetChanged(); // not sure how to notify adapter of this
+            // event
         }
 
         @Override
-        public void onItemRangeRemoved(ObservableList<AdapterDataItem> sender, int positionStart, int itemCount) {
+        public void onItemRangeRemoved(ObservableList<AdapterDataItem> sender
+                , int positionStart, int itemCount) {
             notifyItemRangeRemoved(positionStart, itemCount);
         }
     }
@@ -101,7 +107,8 @@ public class ProcessingOrdersRecyclerViewAdapter extends RecyclerView.Adapter<Pr
             this.idModelPairs.add(new Pair<>(variableId, model));
         }
 
-        public AdapterDataItem(int layoutId, Pair<Integer, Object>... idModelPairs) {
+        public AdapterDataItem(int layoutId,
+                               Pair<Integer, Object>... idModelPairs) {
             Log.d(TAG, "AdapterDataItem: " + layoutId);
             this.layoutId = layoutId;
             this.idModelPairs = Arrays.asList(idModelPairs);
@@ -115,14 +122,17 @@ public class ProcessingOrdersRecyclerViewAdapter extends RecyclerView.Adapter<Pr
             AdapterDataItem that = (AdapterDataItem) o;
 
             if (layoutId != that.layoutId) return false;
-            return idModelPairs != null ? idModelPairs.equals(that.idModelPairs) : that.idModelPairs == null;
+            return idModelPairs != null ?
+                    idModelPairs.equals(that.idModelPairs) :
+                    that.idModelPairs == null;
 
         }
 
         @Override
         public int hashCode() {
             int result = layoutId;
-            result = 31 * result + (idModelPairs != null ? idModelPairs.hashCode() : 0);
+            result = 31 * result + (idModelPairs != null ?
+                    idModelPairs.hashCode() : 0);
             return result;
         }
     }

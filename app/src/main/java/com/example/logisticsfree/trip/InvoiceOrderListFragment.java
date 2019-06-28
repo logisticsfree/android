@@ -20,7 +20,7 @@ import com.example.logisticsfree.BR;
 import com.example.logisticsfree.Common.Common;
 import com.example.logisticsfree.R;
 import com.example.logisticsfree.Utils;
-import com.example.logisticsfree.adapters.ProcessingOrdersRecyclerViewAdapter;
+import com.example.logisticsfree.adapters.InvoiceOrdersRecyclerViewAdapter;
 import com.example.logisticsfree.databinding.FragmentProcessingOrderRecyclerViewBinding;
 import com.example.logisticsfree.home.HomeActivity;
 import com.example.logisticsfree.models.HeadingModel;
@@ -31,13 +31,8 @@ import com.example.logisticsfree.presenters.ListItemsPresenter;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.annotations.Nullable;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.ListenerRegistration;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
 import com.google.gson.Gson;
@@ -49,15 +44,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ProcessingOrderListFragment extends Fragment implements ListItemsPresenter {
+public class InvoiceOrderListFragment extends Fragment implements ListItemsPresenter {
     private final String TAG = "ProcessingFragment";
 
-    private ObservableList<ProcessingOrdersRecyclerViewAdapter.AdapterDataItem> listItems;
+    private ObservableList<InvoiceOrdersRecyclerViewAdapter.AdapterDataItem> listItems;
     private FirebaseUser mUser;
     private FirebaseFirestore afs;
     private boolean finalInvoice = false;
 
-    public ProcessingOrderListFragment() {
+    public InvoiceOrderListFragment() {
         // Required empty public constructor
     }
 
@@ -74,11 +69,15 @@ public class ProcessingOrderListFragment extends Fragment implements ListItemsPr
 
     @android.support.annotation.Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @android.support.annotation.Nullable ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater,
+                             @android.support.annotation.Nullable ViewGroup container,
                              @android.support.annotation.Nullable Bundle savedInstanceState) {
         FragmentProcessingOrderRecyclerViewBinding mBinding = DataBindingUtil
-                .inflate(inflater, R.layout.fragment_processing_order_recycler_view, container, false);
-        mBinding.setListLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
+                .inflate(inflater,
+                        R.layout.fragment_processing_order_recycler_view,
+                        container, false);
+        mBinding.setListLayoutManager(new LinearLayoutManager(getActivity(),
+                LinearLayoutManager.VERTICAL, false));
         mBinding.setModelList(initList());
         mBinding.setItemAnimator(new DefaultItemAnimator());
 
@@ -93,28 +92,34 @@ public class ProcessingOrderListFragment extends Fragment implements ListItemsPr
                     public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
 
                         listItems.clear();
-                        listItems.add(new ProcessingOrdersRecyclerViewAdapter.AdapterDataItem(R.layout.layout_listitem_heading,
-                                new Pair<Integer, Object>(BR.headingModel, new HeadingModel("Remaining Invoices"))));
+                        listItems.add(new InvoiceOrdersRecyclerViewAdapter.AdapterDataItem(R.layout.layout_listitem_heading,
+                                new Pair<Integer, Object>(BR.headingModel,
+                                        new HeadingModel("Remaining Invoices"))));
 
-                        List<ProcessingOrdersRecyclerViewAdapter.AdapterDataItem> list = new ArrayList<>();
+                        List<InvoiceOrdersRecyclerViewAdapter.AdapterDataItem> list = new ArrayList<>();
 
                         if (queryDocumentSnapshots.size() < 1) {
                             return;
                         }
                         String tripID = Common.currentTrip.getTripID();
-                        Common.currentTrip = queryDocumentSnapshots.getDocuments().get(0).toObject(Trip.class);
+                        Common.currentTrip =
+                                queryDocumentSnapshots.getDocuments().get(0).toObject(Trip.class);
                         Common.currentTrip.setTripID(tripID);
-                        Log.d(TAG, "onSuccess: " + Common.currentTrip.getTripID() + " " + Common.currentTrip.getOrders().values());
-                        Map<String, Object> fulDoc = queryDocumentSnapshots.getDocuments().get(0).getData();
+                        Log.d(TAG,
+                                "onSuccess: " + Common.currentTrip.getTripID() + " " + Common.currentTrip.getOrders().values());
+                        Map<String, Object> fulDoc =
+                                queryDocumentSnapshots.getDocuments().get(0).getData();
                         Map orders = (Map) fulDoc.get("orders");
                         Collection<HashMap> ordersList = orders.values();
 
                         for (HashMap orderMap : ordersList) {
                             Gson gson = new Gson();
                             JsonElement jsonElement = gson.toJsonTree(orderMap);
-                            Invoice order = gson.fromJson(jsonElement, Invoice.class);
+                            Invoice order = gson.fromJson(jsonElement,
+                                    Invoice.class);
 
-                            if (order.isCompleted() != null) { // if arrived is not null and
+                            if (order.isCompleted() != null) { // if arrived
+                                // is not null and
                                 if (!order.isCompleted()) { // it's set to false
                                     addToList(list, order);
                                 }
@@ -123,7 +128,7 @@ public class ProcessingOrderListFragment extends Fragment implements ListItemsPr
                             }
                         }
 
-                        Log.d(TAG, "onEvent: InvoicesLeft" + list.size() );
+                        Log.d(TAG, "onEvent: InvoicesLeft" + list.size());
                         if (list.size() <= 1) {
                             finalInvoice = true;
                         }
@@ -134,7 +139,7 @@ public class ProcessingOrderListFragment extends Fragment implements ListItemsPr
     }
 
     //    needed because `this` couldn't get properly inside firebase Listener
-    private void addToList(List<ProcessingOrdersRecyclerViewAdapter.AdapterDataItem> list, Invoice order) {
+    private void addToList(List<InvoiceOrdersRecyclerViewAdapter.AdapterDataItem> list, Invoice order) {
         if (order != null) {
             if (order.isCompleted() != null) {
                 if (!order.isCompleted()) {
@@ -148,26 +153,30 @@ public class ProcessingOrderListFragment extends Fragment implements ListItemsPr
 
     private ObservableList initList() {
         listItems = new ObservableArrayList<>();
-        listItems.add(new ProcessingOrdersRecyclerViewAdapter.AdapterDataItem(R.layout.layout_listitem_heading,
-                new Pair<Integer, Object>(BR.headingModel, new HeadingModel("Remaining Invoices"))));
+        listItems.add(new InvoiceOrdersRecyclerViewAdapter.AdapterDataItem(R.layout.layout_listitem_heading,
+                new Pair<Integer, Object>(BR.headingModel, new HeadingModel(
+                        "Remaining Invoices"))));
         Log.d(TAG, "initList: " + R.layout.layout_listitem_heading);
         return listItems;
     }
 
     @Override
-    public void onClick(ItemModel itemModel) {  // open map & show directions to warehouse
+    public void onClick(ItemModel itemModel) {  // open map & show directions
+        // to warehouse
 //        Common.selectedOrder = itemModel.order;
 //        if (Common.availabile && Common.mLastLocation != null) {
 //            Intent intent = new Intent(getActivity(), DriverTracking.class);
 //            startActivity(intent);
 //
 //        } else {
-//            Toast.makeText(getActivity(), "Please enable the availability switch", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(getActivity(), "Please enable the availability
+//            switch", Toast.LENGTH_SHORT).show();
 //        }
     }
 
     @Override
-    public void onDeleteClick(ItemModel itemModel) { // used: only for testing purposes
+    public void onDeleteClick(ItemModel itemModel) { // used: only for
+        // testing purposes
 
         final FirebaseFirestore fs = FirebaseFirestore.getInstance();
         final String path = "/trips/" + Common.currentTrip.getTripID();
@@ -189,13 +198,16 @@ public class ProcessingOrderListFragment extends Fragment implements ListItemsPr
                 fs.document(path).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                     @Override
                     public void onSuccess(DocumentSnapshot documentSnapshot) {
-                        Common.currentTrip = documentSnapshot.toObject(Trip.class);
+                        Common.currentTrip =
+                                documentSnapshot.toObject(Trip.class);
                         Common.currentTrip.setTripID(documentSnapshot.getId());
                         if (finalInvoice) {
-                            startActivity(new Intent(getActivity(), HomeActivity.class));
+                            startActivity(new Intent(getActivity(),
+                                    TripComplete.class));
                             getActivity().finish();
                         } else {
-                            startActivity(new Intent(getActivity(), TripProcessing.class));
+                            startActivity(new Intent(getActivity(),
+                                    TripProcessing.class));
                             getActivity().finish();
                         }
                     }

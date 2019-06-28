@@ -78,6 +78,7 @@
     <string name="proceed_to_loading_bay">Proceed to Loading Bay</string>
     <string name="start_trip">Start Trip</string>
     <string name="unload">Unload</string>
+    <string name="btn_dismiss_complete_trip">Go Back To Home</string>
 
 
     <string-array name="truck_types">

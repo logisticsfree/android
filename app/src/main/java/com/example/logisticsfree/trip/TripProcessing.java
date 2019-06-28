@@ -4,11 +4,11 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.LocationManager;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -56,14 +56,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 public class TripProcessing extends AppCompatActivity implements OnMapReadyCallback {
     private static final String TAG = "TripProcessing";
-    private GoogleMap mMap;
-    private final int MY_PERMISSIONS_REQUEST_FINE_LOCATION = 1;
     private static final int PERMISSIONS_REQUEST = 100;
+    private final int MY_PERMISSIONS_REQUEST_FINE_LOCATION = 1;
+    private GoogleMap mMap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,9 +78,11 @@ public class TripProcessing extends AppCompatActivity implements OnMapReadyCallb
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         startService(new Intent(this, TrackingService.class));
-        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
+        // Obtain the SupportMapFragment and get notified when the map is
+        // ready to be used.
+        SupportMapFragment mapFragment =
+                (SupportMapFragment) getSupportFragmentManager()
+                        .findFragmentById(R.id.map);
         assert mapFragment != null;
         mapFragment.getMapAsync(this);
 
@@ -89,7 +90,8 @@ public class TripProcessing extends AppCompatActivity implements OnMapReadyCallb
             @Override
             public void onClick(View v) {
                 Log.d(TAG, "onClick: ");
-                startActivity(new Intent(getApplicationContext(), OrderList.class));
+                startActivity(new Intent(getApplicationContext(),
+                        InvoiceOrderListActivity.class));
                 finish();
             }
         });
@@ -98,97 +100,109 @@ public class TripProcessing extends AppCompatActivity implements OnMapReadyCallb
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION},
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION,
+                            Manifest.permission.ACCESS_COARSE_LOCATION},
                     MY_PERMISSIONS_REQUEST_FINE_LOCATION);
             //    ActivityCompat#requestPermissions
             // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //   public void onRequestPermissionsResult(int requestCode,
+            //   String[] permissions,
             //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
+            // to handle the case where the user grants the permission. See
+            // the documentation
             // for ActivityCompat#requestPermissions for more details.
             finish();
         }
         mMap.setMyLocationEnabled(true);
 
         final DirectionsResult[] results = new DirectionsResult[1];
-        final double [] lastLocation = new double[2];
+        final double[] lastLocation = new double[2];
         String mUID = FirebaseAuth.getInstance().getUid();
         FirebaseDatabase fb = FirebaseDatabase.getInstance();
-        fb.getReference("driver-locations").child(mUID).child("l").addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                ArrayList<Double> snap = (ArrayList<Double>) dataSnapshot.getValue();
-                lastLocation[0] = snap.get(0);
-                lastLocation[1] = snap.get(1);
-
-                Runnable r = new Runnable() {
+        fb.getReference("driver-locations").child(mUID).child("l")
+                .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
-                    public void run() {
-                        Log.d(TAG, "run: " + "Start");
-                        try {
-                            DateTime now = new DateTime();
-                            String origin =  lastLocation[0] + ", " + lastLocation[1];
-                            double[] dest = getCoordinates();
-                            String destination = dest[0] + ", " + dest[1];
-                            Log.d(TAG, "run: " + destination);
-                            DirectionsResult result = DirectionsApi.newRequest(getGeoContext())
-                                    .mode(TravelMode.DRIVING)
-                                    .origin(origin)
-                                    .destination(destination)
-                                    .departureTime(now)
-                                    .await();
-                            results[0] = result;
-                            Gson gson = new Gson();
-                            Log.d(TAG, "run result" + gson.toJson(result));
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        ArrayList<Double> snap =
+                                (ArrayList<Double>) dataSnapshot.getValue();
+                        lastLocation[0] = snap.get(0);
+                        lastLocation[1] = snap.get(1);
 
-                        } catch (ApiException e) {
-                            e.printStackTrace();
+                        Runnable r = new Runnable() {
+                            @Override
+                            public void run() {
+                                try {
+                                    DateTime now = new DateTime();
+                                    String origin =
+                                            lastLocation[0] + ", " + lastLocation[1];
+                                    double[] dest = getCoordinates();
+                                    String destination =
+                                            dest[0] + ", " + dest[1];
+                                    Log.d(TAG, "run: " + destination);
+                                    DirectionsResult result =
+                                            DirectionsApi.newRequest(getGeoContext())
+                                                    .mode(TravelMode.DRIVING)
+                                                    .origin(origin)
+                                                    .destination(destination)
+                                                    .departureTime(now)
+                                                    .await();
+                                    results[0] = result;
+                                    Gson gson = new Gson();
+
+                                } catch (ApiException e) {
+                                    e.printStackTrace();
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        };
+
+                        Thread thread = new Thread(r);
+                        thread.start();
+                        try {
+                            thread.join();
                         } catch (InterruptedException e) {
                             e.printStackTrace();
-                        } catch (IOException e) {
-                            e.printStackTrace();
                         }
-                    }
-                };
+                        Log.d(TAG, "getReference result" + results[0]);
 
-                Thread thread = new Thread(r);
-                thread.start();
-                try {
-                    thread.join();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                Log.d(TAG, "getReference result" + results[0]);
+                        addPolyline(results[0], mMap);
 
-                addPolyline(results[0], mMap);
+                        final List<Marker> markers =
+                                addMarkersToMap(results[0], mMap);
 
-                final List<Marker> markers = addMarkersToMap(results[0], mMap);
+                        mMap.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
+                            @Override
+                            public void onMapLoaded() {
+                                LatLngBounds.Builder builder =
+                                        new LatLngBounds.Builder();
+                                for (Marker marker : markers) {
+                                    builder.include(marker.getPosition());
+                                }
+                                LatLngBounds bounds = builder.build();
 
-                mMap.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
-                    @Override
-                    public void onMapLoaded() {
-                        LatLngBounds.Builder builder = new LatLngBounds.Builder();
-                        for (Marker marker : markers) {
-                            builder.include(marker.getPosition());
-                        }
-                        LatLngBounds bounds = builder.build();
-
-                        int padding = 50; // offset from edges of the map in pixels
-                        CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, padding);
-                        mMap.animateCamera(cu);
+                                int padding = 50; // offset from edges of the
+                                // map in pixels
+                                CameraUpdate cu =
+                                        CameraUpdateFactory.newLatLngBounds(bounds, padding);
+                                mMap.animateCamera(cu);
 //                putMyLocation(mMap);
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                        Log.d(TAG, "onCancelled: " + "I'm F*cked");
                     }
                 });
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                Log.d(TAG, "onCancelled: " + "I'm F*cked");
-            }
-        });
 
     }
 
@@ -201,34 +215,25 @@ public class TripProcessing extends AppCompatActivity implements OnMapReadyCallb
         int nextDistIndex = noOfOrders;
         for (Iterator<String> it = ordersJson.keys(); it.hasNext(); ) {
             String key = it.next();
-            Log.d(TAG, "getCoordinates: " + key);
             try {
                 HashMap order = (HashMap) ordersJson.get(key);
                 HashMap dist = (HashMap) order.get("distributor");
                 int seqNo = (int) (long) order.get("seqNo");
 
-                Log.d(TAG, "getCoordinates:1 " + key + " - " + seqNo + " - " + dist);
-
                 if (order.get("completed") != null) {
-                    Log.d(" ", "getCoordinates:2 " + key + " - " + seqNo + " - " + nextDistIndex );
-
                     if (!(boolean) order.get("completed")) {
-                        Log.d(TAG, "getCoordinates:3 " + key + " - " + seqNo + " - " + nextDistIndex);
                         if (seqNo <= nextDistIndex) {
-                            Log.d(TAG, "getCoordinates:3 " + key + " - " + seqNo + " - " + nextDistIndex);
-
                             nextDistIndex = seqNo;
                         }
                     }
                 } else {
                     if (seqNo <= nextDistIndex) {
-                        Log.d(TAG, "getCoordinates:4 " + key + " - " + seqNo + " - " + nextDistIndex);
-
                         nextDistIndex = seqNo;
                     }
                 }
 
-                dists[seqNo] = new double[] {(double) dist.get("latitude"), (double) dist.get("longitude")};
+                dists[seqNo] = new double[]{(double) dist.get("latitude"),
+                        (double) dist.get("longitude")};
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -237,7 +242,8 @@ public class TripProcessing extends AppCompatActivity implements OnMapReadyCallb
         return dists[nextDistIndex];
     }
 
-    private List<Marker> addMarkersToMap(DirectionsResult results, GoogleMap mMap) {
+    private List<Marker> addMarkersToMap(DirectionsResult results,
+                                         GoogleMap mMap) {
         List<Marker> markers = new ArrayList<>();
 
         markers.add(mMap.addMarker(new MarkerOptions().position(
@@ -258,7 +264,8 @@ public class TripProcessing extends AppCompatActivity implements OnMapReadyCallb
     }
 
     private void addPolyline(DirectionsResult result, GoogleMap mMap) {
-        List<LatLng> decodedPath = PolyUtil.decode(result.routes[0].overviewPolyline.getEncodedPath());
+        List<LatLng> decodedPath =
+                PolyUtil.decode(result.routes[0].overviewPolyline.getEncodedPath());
         mMap.addPolyline(new PolylineOptions().addAll(decodedPath));
     }
 
@@ -270,16 +277,19 @@ public class TripProcessing extends AppCompatActivity implements OnMapReadyCallb
                 .setReadTimeout(5, TimeUnit.SECONDS)
                 .setWriteTimeout(5, TimeUnit.SECONDS);
     }
+
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_actionbar, menu);
 
-        final Switch availableSwitch = menu.findItem(R.id.action_set_availability).getActionView().findViewById(R.id.switchForActionBar);
+        final Switch availableSwitch =
+                menu.findItem(R.id.action_set_availability).getActionView().findViewById(R.id.switchForActionBar);
 
         assert availableSwitch != null;
         availableSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+            public void onCheckedChanged(CompoundButton buttonView,
+                                         boolean isChecked) {
                 if (isChecked) {
                     if (!startTrackerService()) {
                         availableSwitch.setChecked(false);
@@ -299,11 +309,14 @@ public class TripProcessing extends AppCompatActivity implements OnMapReadyCallb
 
         return true;
     }
+
     private boolean startTrackerService() {
         //Check whether GPS tracking is enabled//
-        LocationManager lm = (LocationManager) getSystemService(LOCATION_SERVICE);
+        LocationManager lm =
+                (LocationManager) getSystemService(LOCATION_SERVICE);
         if (!lm.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-            Toast.makeText(this, "Please enable Location Service", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "Please enable Location Service",
+                    Toast.LENGTH_LONG).show();
 //            finish();
             return false;
         }
@@ -312,7 +325,8 @@ public class TripProcessing extends AppCompatActivity implements OnMapReadyCallb
         int permission = ContextCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_FINE_LOCATION);
 
-        //If the location permission has been granted, then start the TrackerService//
+        //If the location permission has been granted, then start the
+        // TrackerService//
 
         if (permission == PackageManager.PERMISSION_GRANTED) {
             startService(new Intent(this, TrackingService.class));
@@ -322,13 +336,15 @@ public class TripProcessing extends AppCompatActivity implements OnMapReadyCallb
 //            finish();
         } else {
 
-//If the app doesn’t currently have access to the user’s location, then request access//
+//If the app doesn’t currently have access to the user’s location, then
+// request access//
             ActivityCompat.requestPermissions(this,
                     new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                     PERMISSIONS_REQUEST);
             return false;
         }
     }
+
     private void stopTrackerService() {
         stopService(new Intent(this, TrackingService.class));
         Toast.makeText(this, "GPS tracking disabled", Toast.LENGTH_LONG).show();
