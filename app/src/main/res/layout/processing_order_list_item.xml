@@ -29,12 +29,13 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:textColor="#202020"
-                android:drawableStart="@drawable/ic_baseline_place"
+                android:drawableStart="@drawable/ic_baseline_local_offer_24px"
                 android:foreground="?selectableItemBackground"
                 android:gravity="center_vertical"
-                android:text="@{itemModel.invoice.distributor.name}"
+                android:text="@{itemModel.invoice.invoice}"
                 android:textSize="20sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                tools:text="Invoice ID"/>
         </LinearLayout>
 
         <View
@@ -54,36 +55,35 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:drawableStart="@drawable/ic_baseline_date_range"
+                android:drawableStart="@drawable/ic_baseline_place"
                 android:foreground="?selectableItemBackground"
                 android:gravity="center_vertical"
-                android:text="@{itemModel.invoice.invoice}"
+                android:text="@{itemModel.invoice.distributor.name}"
                 android:textSize="18sp"
                 android:textStyle="normal"
-                tools:text="Item Text" />
+                tools:text="Invoice Address" />
 
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:drawableStart="@drawable/ic_baseline_watch_later"
-                android:foreground="?selectableItemBackground"
-                android:gravity="center_vertical"
-                android:onClick="@{(v) -> itemPresenter.onDeleteClick(itemModel)}"
-                android:text="@{itemModel.invoice.weight}"
-                android:textSize="18sp"
-                android:textStyle="normal"
-                tools:text="Item Text" />
+            <!--<TextView-->
+                <!--android:layout_width="0dp"-->
+                <!--android:layout_height="match_parent"-->
+                <!--android:layout_weight="1"-->
+                <!--android:drawableStart="@drawable/ic_baseline_watch_later"-->
+                <!--android:foreground="?selectableItemBackground"-->
+                <!--android:gravity="center_vertical"-->
+                <!--android:onClick="@{(v) -> itemPresenter.onDeleteClick(itemModel)}"-->
+                <!--android:text="@{itemModel.invoice.weight}"-->
+                <!--android:textSize="18sp"-->
+                <!--android:textStyle="normal"-->
+                <!--tools:text="Item Text" />-->
 
-            <!--TODO: Enable This-->
-            <!--<ImageView-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="match_parent"-->
-            <!--android:layout_gravity="right"-->
-            <!--android:layout_marginEnd="15dp"-->
-            <!--android:foreground="?selectableItemBackground"-->
-            <!--android:onClick="@{(v) -> itemPresenter.onDeleteClick(itemModel)}"-->
-            <!--android:src="@drawable/ic_delete" />-->
+            <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="right"
+            android:layout_marginEnd="15dp"
+            android:foreground="?selectableItemBackground"
+            android:onClick="@{(v) -> itemPresenter.onDeleteClick(itemModel)}"
+            android:src="@drawable/ic_delete" />
 
             <!--<ImageView-->
             <!--android:layout_width="wrap_content"-->

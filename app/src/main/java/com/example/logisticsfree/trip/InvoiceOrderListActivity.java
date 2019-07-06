@@ -79,7 +79,7 @@ public class InvoiceOrderListActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_set_availability:
-                Log.d(TAG, "onOptionsItemsSelected: asdfasfd");
+                Log.d(TAG, "onOptionsItemsSelected: asd");
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

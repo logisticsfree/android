@@ -23,13 +23,17 @@
 
         <Button
             android:id="@+id/btn_unload"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center|bottom"
-            android:background="@drawable/yellowloginbutton"
+            android:background="@drawable/btn_start_loading"
             android:visibility="visible"
             android:text="@string/unload"
-            android:padding="10dp"
+            android:textColor="#f4f4f4"
+            android:textSize="20sp"
+            android:padding="15dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
             android:layout_marginBottom="20dp"
             android:paddingBottom="10dp"/>
     </fragment>

@@ -70,7 +70,7 @@ public class WarehouseMap extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_driver_tracking);
+        setContentView(R.layout.activity_warehouse_map);
 
         arrivedButton = findViewById(R.id.btn_arrived);
         currentOrder = Common.selectedOrder;

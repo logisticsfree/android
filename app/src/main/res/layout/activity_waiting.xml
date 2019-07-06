@@ -28,18 +28,15 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
         android:text="@string/wait_for_further_instructions"
-        android:textSize="20sp"
         android:textFontWeight="800"
+        android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/wait_for_instructions"
-        app:layout_constraintVertical_bias="0.504" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
         android:id="@+id/txtProceedToBay"
@@ -50,8 +47,8 @@
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
         android:text="@string/proceed_to_loading_bay"
-        android:visibility="gone"
         android:textSize="20sp"
+        android:visibility="invisible"
         app:layout_constraintBottom_toTopOf="@+id/wait_for_instructions"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -66,8 +63,8 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
-        android:visibility="gone"
         android:textSize="50sp"
+        android:visibility="invisible"
         app:layout_constraintBottom_toTopOf="@+id/wait_for_instructions"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
@@ -77,18 +74,22 @@
 
     <Button
         android:id="@+id/btnStartLoading"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
-        android:padding="30dp"
+        android:background="@drawable/btn_start_loading"
+        android:padding="15dp"
         android:text="@string/start_loading"
-        android:visibility="gone"
+        android:textColor="#f4f4f4"
+        android:textSize="20sp"
+        android:visibility="invisible"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent" />
-
 
 </android.support.constraint.ConstraintLayout>

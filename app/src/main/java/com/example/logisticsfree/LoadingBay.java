@@ -41,8 +41,10 @@ public class LoadingBay extends AppCompatActivity {
         setContentView(R.layout.activity_loading_bay);
         Toolbar myToolbar = findViewById(R.id.toolbarLoadingBay);
         setSupportActionBar(myToolbar);
-        myToolbar.setTitle("Orders");
-        myToolbar.showOverflowMenu();
+        setTitle("Invoices");
+        getSupportActionBar().setHomeButtonEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+//        myToolbar.showOverflowMenu();
 
         Button btnStartTrip = findViewById(R.id.btnStartTrip);
 
