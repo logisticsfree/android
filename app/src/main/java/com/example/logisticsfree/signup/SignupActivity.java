@@ -28,7 +28,6 @@ public class SignupActivity extends AppCompatActivity {
         signupPhone.setError(null);
         String phoneNo = signupPhone.getText().toString();
 
-
         if (TextUtils.isEmpty(phoneNo)) {
             signupPhone.setError(getString(R.string.error_field_required));
             signupPhone.requestFocus();

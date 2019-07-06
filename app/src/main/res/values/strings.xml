@@ -79,6 +79,7 @@
     <string name="start_trip">Start Trip</string>
     <string name="unload">Unload</string>
     <string name="btn_dismiss_complete_trip">Go Back To Home</string>
+    <string name="trip_complete">Trip Complete!</string>
 
 
     <string-array name="truck_types">
