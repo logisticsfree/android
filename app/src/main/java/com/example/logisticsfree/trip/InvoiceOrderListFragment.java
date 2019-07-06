@@ -22,7 +22,6 @@ import com.example.logisticsfree.R;
 import com.example.logisticsfree.Utils;
 import com.example.logisticsfree.adapters.InvoiceOrdersRecyclerViewAdapter;
 import com.example.logisticsfree.databinding.FragmentProcessingOrderRecyclerViewBinding;
-import com.example.logisticsfree.home.HomeActivity;
 import com.example.logisticsfree.models.HeadingModel;
 import com.example.logisticsfree.models.Invoice;
 import com.example.logisticsfree.models.ItemModel;
@@ -61,10 +60,10 @@ public class InvoiceOrderListFragment extends Fragment implements ListItemsPrese
         super.onCreate(savedInstanceState);
         mUser = FirebaseAuth.getInstance().getCurrentUser();
         afs = FirebaseFirestore.getInstance();
+
         loadFromFirestore();
 
-        getActivity().setTitle("Orders List");
-
+        getActivity().setTitle("Invoices");
     }
 
     @android.support.annotation.Nullable
@@ -90,13 +89,13 @@ public class InvoiceOrderListFragment extends Fragment implements ListItemsPrese
                 .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                     @Override
                     public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-
                         listItems.clear();
                         listItems.add(new InvoiceOrdersRecyclerViewAdapter.AdapterDataItem(R.layout.layout_listitem_heading,
                                 new Pair<Integer, Object>(BR.headingModel,
                                         new HeadingModel("Remaining Invoices"))));
 
-                        List<InvoiceOrdersRecyclerViewAdapter.AdapterDataItem> list = new ArrayList<>();
+                        List<InvoiceOrdersRecyclerViewAdapter.AdapterDataItem> list =
+                                new ArrayList<>();
 
                         if (queryDocumentSnapshots.size() < 1) {
                             return;
@@ -139,7 +138,8 @@ public class InvoiceOrderListFragment extends Fragment implements ListItemsPrese
     }
 
     //    needed because `this` couldn't get properly inside firebase Listener
-    private void addToList(List<InvoiceOrdersRecyclerViewAdapter.AdapterDataItem> list, Invoice order) {
+    private void addToList(List<InvoiceOrdersRecyclerViewAdapter.AdapterDataItem> list,
+                           Invoice order) {
         if (order != null) {
             if (order.isCompleted() != null) {
                 if (!order.isCompleted()) {
@@ -175,9 +175,7 @@ public class InvoiceOrderListFragment extends Fragment implements ListItemsPrese
     }
 
     @Override
-    public void onDeleteClick(ItemModel itemModel) { // used: only for
-        // testing purposes
-
+    public void onDeleteClick(ItemModel itemModel) { // used: only for testing purposes
         final FirebaseFirestore fs = FirebaseFirestore.getInstance();
         final String path = "/trips/" + Common.currentTrip.getTripID();
 
@@ -198,16 +196,13 @@ public class InvoiceOrderListFragment extends Fragment implements ListItemsPrese
                 fs.document(path).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                     @Override
                     public void onSuccess(DocumentSnapshot documentSnapshot) {
-                        Common.currentTrip =
-                                documentSnapshot.toObject(Trip.class);
+                        Common.currentTrip = documentSnapshot.toObject(Trip.class);
                         Common.currentTrip.setTripID(documentSnapshot.getId());
                         if (finalInvoice) {
-                            startActivity(new Intent(getActivity(),
-                                    TripComplete.class));
+                            startActivity(new Intent(getActivity(), TripComplete.class));
                             getActivity().finish();
                         } else {
-                            startActivity(new Intent(getActivity(),
-                                    TripProcessing.class));
+                            startActivity(new Intent(getActivity(), TripProcessing.class));
                             getActivity().finish();
                         }
                     }

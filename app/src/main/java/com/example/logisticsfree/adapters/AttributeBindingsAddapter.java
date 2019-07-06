@@ -3,6 +3,9 @@ package com.example.logisticsfree.adapters;
 import android.databinding.BindingAdapter;
 import android.databinding.ObservableList;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
+
+import com.example.logisticsfree.SwipeToDeleteCallback;
 
 public class AttributeBindingsAddapter {
     @BindingAdapter({"list", "layoutManager", "itemAnimator"})
@@ -12,15 +15,18 @@ public class AttributeBindingsAddapter {
         if (rv.getLayoutManager() == null)
             rv.setLayoutManager(layoutManager);
         if (rv.getAdapter() == null) {
-            String recyclerClass =
-                    new RecyclerViewBindingAdapter.AdapterDataItem(0, 0,
-                            new Object()).getClass().toString();
-            String currentDataItemClass =
-                    dataItems.get(0).getClass().toString();
+            String recyclerClass = RecyclerViewBindingAdapter.AdapterDataItem.class.toString();
+            String currentDataItemClass = dataItems.get(0).getClass().toString();
+
             if (recyclerClass.equals(currentDataItemClass)) {
                 rv.setAdapter(new RecyclerViewBindingAdapter(dataItems));
             } else {
-                rv.setAdapter(new InvoiceOrdersRecyclerViewAdapter(dataItems));
+                InvoiceOrdersRecyclerViewAdapter mAdapter = new InvoiceOrdersRecyclerViewAdapter(dataItems);
+                mAdapter.setContext(rv.getContext());
+
+                rv.setAdapter(mAdapter);
+                ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new SwipeToDeleteCallback(mAdapter));
+                itemTouchHelper.attachToRecyclerView(rv);
             }
         }
         if (rv.getItemAnimator() == null)

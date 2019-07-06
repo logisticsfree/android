@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    xmlns:app="http://schemas.android.com/apk/res-auto" >
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    >
 
     <data>
         <variable
@@ -23,7 +24,8 @@
         tools:context=".trip.InvoiceOrderListFragment"
         app:list="@{modelList}"
         app:layoutManager="@{listLayoutManager}"
-        app:itemAnimator="@{itemAnimator}">
+        app:itemAnimator="@{itemAnimator}"
+        >
 
     </android.support.v7.widget.RecyclerView>
 </layout>
