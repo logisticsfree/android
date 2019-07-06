@@ -21,7 +21,7 @@ import android.widget.Toast;
 
 import com.example.logisticsfree.BR;
 import com.example.logisticsfree.Common.Common;
-import com.example.logisticsfree.DriverTracking;
+import com.example.logisticsfree.WarehouseMap;
 import com.example.logisticsfree.R;
 import com.example.logisticsfree.Utils;
 import com.example.logisticsfree.WaitingActivity;
@@ -108,35 +108,6 @@ public class HomeFragment extends Fragment implements ListItemsPresenter {
         return mBinding.getRoot();
     }
 
-    private void checkForProcessingTrip() {
-        Log.d(TAG, "checkForProcessingTrip: ");
-//        need to run a query because we don't know the companyID of the order
-        afs.collection("trips/").whereEqualTo("driverID", mUser.getUid())
-                .whereEqualTo("active", true)
-                .limit(1)
-                .get()
-                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                    @Override
-                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                        for (DocumentSnapshot doc : queryDocumentSnapshots) {
-                            if (doc.exists()) {
-                                Trip trip = doc.toObject(Trip.class);
-                                trip.setTripID(doc.getId());
-                                Log.d(TAG, "onEvent:1 " + doc.getId());
-                                Common.currentTrip = trip;
-
-                                if (trip.getActive()) {
-                                    Intent intent = new Intent(getContext(),
-                                            TripProcessing.class);
-                                    startActivity(intent);
-                                    getActivity().finish();
-                                }
-                            }
-                        }
-                    }
-                });
-    }
-
     private void loadFromFirestore() {
         ordersListenerReg = afs.collection("drivers/" + mUser.getUid() +
                 "/orders/")
@@ -173,6 +144,33 @@ public class HomeFragment extends Fragment implements ListItemsPresenter {
         });
     }
 
+    private void checkForProcessingTrip() {
+//        need to run a query because we don't know the companyID of the order
+        afs.collection("trips/").whereEqualTo("driverID", mUser.getUid())
+                .whereEqualTo("active", true)
+                .limit(1)
+                .get()
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                        for (DocumentSnapshot doc : queryDocumentSnapshots) {
+                            if (doc.exists()) {
+                                Trip trip = doc.toObject(Trip.class);
+                                trip.setTripID(doc.getId());
+                                Log.d(TAG, "onEvent:1 " + doc.getId());
+                                Common.currentTrip = trip;
+
+                                if (trip.getActive()) {
+                                    Intent intent = new Intent(getContext(), TripProcessing.class);
+                                    startActivity(intent);
+                                    getActivity().finish();
+                                }
+                            }
+                        }
+                    }
+                });
+    }
+
     //    needed because `this` couldn't get properly inside firebase Listener
     private void addToList(List<RecyclerViewBindingAdapter.AdapterDataItem> list, QueryDocumentSnapshot doc) {
         if (doc.exists()) {
@@ -196,7 +194,7 @@ public class HomeFragment extends Fragment implements ListItemsPresenter {
         // to warehouse
         Common.selectedOrder = itemModel.order;
         if (Common.availabile && Common.mLastLocation != null) {
-            Intent intent = new Intent(getActivity(), DriverTracking.class);
+            Intent intent = new Intent(getActivity(), WarehouseMap.class);
             startActivity(intent);
 
         } else {

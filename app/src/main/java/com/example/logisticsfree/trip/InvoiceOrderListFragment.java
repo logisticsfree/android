@@ -165,7 +165,7 @@ public class InvoiceOrderListFragment extends Fragment implements ListItemsPrese
         // to warehouse
 //        Common.selectedOrder = itemModel.order;
 //        if (Common.availabile && Common.mLastLocation != null) {
-//            Intent intent = new Intent(getActivity(), DriverTracking.class);
+//            Intent intent = new Intent(getActivity(), WarehouseMap.class);
 //            startActivity(intent);
 //
 //        } else {
