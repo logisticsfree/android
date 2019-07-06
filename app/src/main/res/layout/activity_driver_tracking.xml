@@ -4,12 +4,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.logisticsfree.DriverTracking">
+    tools:context="com.example.logisticsfree.WarehouseMap">
     <fragment
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/map"
-        tools:context=".DriverTracking"
+        tools:context=".WarehouseMap"
         android:name="com.google.android.gms.maps.SupportMapFragment">
 
         <Button

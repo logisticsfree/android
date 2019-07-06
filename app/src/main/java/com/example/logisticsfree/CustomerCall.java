@@ -84,7 +84,7 @@ public class CustomerCall extends AppCompatActivity {
         btnAccept.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                Intent intent = new Intent(CustomerCall.this, DriverTracking.class);
+//                Intent intent = new Intent(CustomerCall.this, WarehouseMap.class);
 //                intent.putExtra("lat", lat);
 //                intent.putExtra("lng", lng);
 //                intent.putExtra("customerId", customerId);

@@ -55,7 +55,7 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 
-public class DriverTracking extends AppCompatActivity implements OnMapReadyCallback,
+public class WarehouseMap extends AppCompatActivity implements OnMapReadyCallback,
         GoogleMap.OnMyLocationButtonClickListener,
         GoogleMap.OnMyLocationClickListener {
 
@@ -86,9 +86,27 @@ public class DriverTracking extends AppCompatActivity implements OnMapReadyCallb
             public void onClick(View v) {
                 setAsArrived();
                 displayWaitingScreen();
-
             }
         });
+    }
+
+    private void setAsArrived() {
+        FirebaseFirestore fs = FirebaseFirestore.getInstance();
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        String driverOrderPath =
+                "drivers/" + user.getUid() + "/orders/" + currentOrder.getCompanyID();
+        String orderedTruckPath = "ordered-trucks/" + currentOrder.getCompanyID() + "/ordered" +
+                "-trucks/" + user.getUid();
+
+        Map<String, Object> data = new HashMap<>();
+        data.put("arrived", true);
+
+//      set drivers/truckID/orders/companyID->arrived: true
+//        and ordered-trucks/companyID/ordered-trucks/truckID
+//        not using firebase function inverseSync, bc it causes infinite cycles
+//        ng app should handle it from their
+        fs.document(driverOrderPath).set(data, SetOptions.merge());
+        fs.document(orderedTruckPath).set(data, SetOptions.merge());
     }
 
     private void displayWaitingScreen() {
@@ -212,26 +230,6 @@ public class DriverTracking extends AppCompatActivity implements OnMapReadyCallb
             public void onGeoQueryError(DatabaseError error) {
             }
         });
-    }
-
-    private void setAsArrived() {
-        FirebaseFirestore fs = FirebaseFirestore.getInstance();
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        String driverOrderPath =
-                "drivers/" + user.getUid() + "/orders/" + currentOrder.getCompanyID();
-        String orderedTruckPath = "ordered-trucks/" + currentOrder.getCompanyID() + "/ordered" +
-                "-trucks/" + user.getUid();
-
-        Map<String, Object> data = new HashMap<>();
-        data.put("arrived", true);
-
-//      set drivers/truckID/orders/companyID->arrived: true
-//        and ordered-trucks/companyID/ordered-trucks/truckID
-//        not using firebase function inverseSync, bc it causes infinite cycles
-//        ng app should handle it from their
-        fs.document(driverOrderPath).set(data, SetOptions.merge());
-        fs.document(orderedTruckPath).set(data, SetOptions.merge());
-
     }
 
     private HashMap<String, Serializable> getCoordinates() {

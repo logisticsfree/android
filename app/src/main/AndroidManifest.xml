@@ -26,7 +26,7 @@
         <activity android:name=".setting.ProfileActivity" />
         <activity android:name=".setting.VehicleActivity" />
         <activity android:name=".NewTripActivity" />
-        <activity android:name=".DriverTracking" />
+        <activity android:name=".WarehouseMap" />
         <activity android:name=".CustomerCall" />
         <activity android:name=".signup.SignupActivity4" />
 

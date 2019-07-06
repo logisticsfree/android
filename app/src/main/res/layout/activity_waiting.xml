@@ -33,7 +33,7 @@
         android:layout_marginBottom="8dp"
         android:text="@string/wait_for_further_instructions"
         android:textSize="20sp"
-        android:textFontWeight="bold"
+        android:textFontWeight="800"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"

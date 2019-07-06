@@ -13,6 +13,7 @@ import com.example.logisticsfree.Common.Utils;
 import com.example.logisticsfree.models.Trip;
 import com.example.logisticsfree.trip.TripProcessing;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
@@ -47,10 +48,8 @@ public class LoadingBay extends AppCompatActivity {
 
         String[][] myData = new String[][]{};
 
-        final TableDataAdapter<String[]> myDataAdapter =
-                new SimpleTableDataAdapter(this, myData);
-        TableHeaderAdapter myHeaderAdapter =
-                new SimpleTableHeaderAdapter(this, "Invoice No.", "Address");
+        final TableDataAdapter<String[]> myDataAdapter = new SimpleTableDataAdapter(this, myData);
+        TableHeaderAdapter myHeaderAdapter = new SimpleTableHeaderAdapter(this, "Invoice No.", "Address");
 
         TableView<String[]> table = findViewById(R.id.tableOrders);
         table.setColumnCount(2);
@@ -64,9 +63,8 @@ public class LoadingBay extends AppCompatActivity {
 
         FirebaseFirestore fs = FirebaseFirestore.getInstance();
         String mUID = FirebaseAuth.getInstance().getUid();
-        String path =
-                "/ordered-trucks/" + Common.selectedOrder.getCompanyID() +
-                        "/ordered-trucks/" + mUID;
+        String path = "/ordered-trucks/" + Common.selectedOrder.getCompanyID() + "/ordered-trucks/" + mUID;
+
         fs.document(path).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -78,7 +76,7 @@ public class LoadingBay extends AppCompatActivity {
                     Map distributor = (Map) ((Map) order).get("distributor");
                     String address = (String) distributor.get("name");    //
                     // TODO: change to actually address (should add a field
-                    //  in Firebase)
+                    //  on Firebase)
                     myDataAdapter.getData().add(new String[]{invoiceNo,
                             address});
                 }
@@ -92,38 +90,42 @@ public class LoadingBay extends AppCompatActivity {
             public void onClick(View v) {
                 FirebaseFirestore fs = FirebaseFirestore.getInstance();
                 String mUID = FirebaseAuth.getInstance().getUid();
-                String from =
-                        "/ordered-trucks/" + Common.selectedOrder.getCompanyID() + "/ordered-trucks/" + mUID;
+                String from = "/ordered-trucks/" + Common.selectedOrder.getCompanyID() + "/ordered-trucks/" + mUID;
                 String to = "/trips/";
 
                 final DocumentReference fromDoc = fs.document(from);
                 final DocumentReference toDoc = fs.collection(to).document();
-                final DocumentReference fromDocDriver = fs.document("/drivers" +
-                        "/" + mUID + "/orders/" + Common.selectedOrder.getCompanyID());
+                final DocumentReference fromDocDriver = fs.document("/drivers/" + mUID + "/orders/"
+                        + Common.selectedOrder.getCompanyID());
                 final DocumentReference toDocDriver =
                         fs.document("/drivers/" + mUID + "/trips/" + Common.selectedOrder.getCompanyID());
 
-                Map<String, Object> data = new HashMap<>();
+                final Map<String, Object> data = new HashMap<>();
                 data.put("driverID", mUID);
                 data.put("active", true);
+                data.put("tripID", toDoc.getId());
+
                 fromDoc.set(data, SetOptions.merge()).addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         if (!task.isSuccessful()) return;
 
-                        fromDoc.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                        fromDocDriver.set(data, SetOptions.merge()).addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
-                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                Common.currentTrip =
-                                        task.getResult().toObject(Trip.class);
-                                Common.currentTrip.setTripID(toDoc.getId());
+                            public void onSuccess(Void aVoid) {
+                                fromDoc.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                        Common.currentTrip = task.getResult().toObject(Trip.class);
+                                        Common.currentTrip.setTripID(toDoc.getId());
 
-                                Utils.moveFirestoreDocument(fromDoc, toDoc);
-                                Utils.moveFirestoreDocument(fromDocDriver,
-                                        toDocDriver);
+                                        Utils.moveFirestoreDocument(fromDoc, toDoc);
+                                        Utils.moveFirestoreDocument(fromDocDriver, toDocDriver);
 
-                                startActivity(new Intent(getApplicationContext(), TripProcessing.class));
-                                finish();
+                                        startActivity(new Intent(getApplicationContext(), TripProcessing.class));
+                                        finish();
+                                    }
+                                });
                             }
                         });
                     }

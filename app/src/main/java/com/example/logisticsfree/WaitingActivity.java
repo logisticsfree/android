@@ -76,12 +76,15 @@ public class WaitingActivity extends AppCompatActivity {
         btnStartLoading.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), LoadingBay.class);
-                startActivity(intent);
-                finish();
+                gotoLoadingBay();
             }
         });
+    }
 
+    private void gotoLoadingBay() {
+        Intent intent = new Intent(this, LoadingBay.class);
+        startActivity(intent);
+        finish();
     }
 
     @Override
