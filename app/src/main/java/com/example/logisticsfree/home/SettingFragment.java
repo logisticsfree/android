@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -28,7 +29,6 @@ import com.google.firebase.auth.FirebaseUser;
 public class SettingFragment extends Fragment {
     private final String TAG = "SettingFragment";
 
-
     private FirebaseAuth mAuth;
     private FirebaseUser mUser;
 
@@ -37,6 +37,12 @@ public class SettingFragment extends Fragment {
         mAuth = FirebaseAuth.getInstance();
         mUser = mAuth.getCurrentUser();
 
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        getActivity().setTitle("Settings");
     }
 
     @Override
