@@ -102,10 +102,6 @@ public class HomeActivity extends AppCompatActivity {
                         setFragment(historyFragment);
                         return true;
                     }
-                    case R.id.nav_rating: {
-                        setFragment(rattingFragment);
-                        return true;
-                    }
                     case R.id.nav_setting: {
                         setFragment(settingFragment);
                         return true;

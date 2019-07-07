@@ -87,18 +87,12 @@ public class HomeFragment extends Fragment implements ListItemsPresenter {
         getActivity().registerReceiver(broadcastReceiver, new IntentFilter("finish_fragment_home"));
     }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        getActivity().unregisterReceiver(broadcastReceiver);
-        ordersListenerReg.remove();
-    }
-
     @android.support.annotation.Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
                              @android.support.annotation.Nullable ViewGroup container,
                              @android.support.annotation.Nullable Bundle savedInstanceState) {
+
         FragmentHomeBinding mBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_home, container, false);
         mBinding.setListLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
         mBinding.setModelList(initList());
@@ -144,37 +138,9 @@ public class HomeFragment extends Fragment implements ListItemsPresenter {
                         return;
                     }
                 }
-//                checkForProcessingTrip();
                 listItems.addAll(list);
             }
         });
-    }
-
-    private void checkForProcessingTrip() {
-//        need to run a query because we don't know the companyID of the order
-        afs.collection("trips/").whereEqualTo("driverID", mUser.getUid())
-                .whereEqualTo("active", true)
-                .limit(1)
-                .get()
-                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                    @Override
-                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                        for (DocumentSnapshot doc : queryDocumentSnapshots) {
-                            if (doc.exists()) {
-                                Trip trip = doc.toObject(Trip.class);
-                                trip.setTripID(doc.getId());
-                                Log.d(TAG, "onEvent:1 " + doc.getId());
-                                Common.currentTrip = trip;
-
-                                if (trip.getActive()) {
-                                    Intent intent = new Intent(getContext(), TripProcessing.class);
-                                    startActivity(intent);
-                                    getActivity().finish();
-                                }
-                            }
-                        }
-                    }
-                });
     }
 
     //    needed because `this` couldn't get properly inside firebase Listener
@@ -236,5 +202,12 @@ public class HomeFragment extends Fragment implements ListItemsPresenter {
     @Override
     public void onLoadMoreClick() { // not used
         Toast.makeText(getActivity(), "loadMore clicked", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        getActivity().unregisterReceiver(broadcastReceiver);
+        ordersListenerReg.remove();
     }
 }

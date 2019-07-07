@@ -11,10 +11,6 @@
         android:icon="@drawable/baseline_history_black_24dp"
         android:title="@string/nav_history" />
     <item
-        android:id="@+id/nav_rating"
-        android:icon="@drawable/baseline_star_rate_black_24dp"
-        android:title="@string/nav_rating" />
-    <item
         android:id="@+id/nav_setting"
         android:icon="@drawable/baseline_settings_black_24dp"
         android:title="@string/nav_setting" />
