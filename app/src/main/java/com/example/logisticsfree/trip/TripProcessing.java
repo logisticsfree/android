@@ -202,13 +202,14 @@ public class TripProcessing extends AppCompatActivity implements OnMapReadyCallb
 
         int noOfOrders = Iterators.size(ordersJson.keys());
         double[][] dists = new double[noOfOrders][2];
-        int nextDistIndex = noOfOrders;
+        long nextDistIndex = noOfOrders;
         for (Iterator<String> it = ordersJson.keys(); it.hasNext(); ) {
             String key = it.next();
             try {
                 HashMap order = (HashMap) ordersJson.get(key);
                 HashMap dist = (HashMap) order.get("distributor");
-                int seqNo = (int) (long) order.get("seqNo");
+                Log.d(TAG, "getCoordinates: " + key + "-^*^*^*-" + dist);
+                long seqNo = (long) order.get("seqNo");
 
                 if (order.get("completed") != null) {
                     if (!(boolean) order.get("completed")) {
@@ -222,14 +223,14 @@ public class TripProcessing extends AppCompatActivity implements OnMapReadyCallb
                     }
                 }
 
-                dists[seqNo] = new double[]{(double) dist.get("latitude"),
+                dists[(int) seqNo] = new double[]{(double) dist.get("latitude"),
                         (double) dist.get("longitude")};
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         }
         Log.d(TAG, "getCoordinates:5 " + nextDistIndex);
-        return dists[nextDistIndex];
+        return dists[(int) nextDistIndex];
     }
 
     private List<Marker> addMarkersToMap(DirectionsResult results, GoogleMap mMap) {

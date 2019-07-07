@@ -64,8 +64,7 @@ public class LoadingBay extends AppCompatActivity {
         table.setColumnModel(columnModel);
 
         FirebaseFirestore fs = FirebaseFirestore.getInstance();
-        String mUID = FirebaseAuth.getInstance().getUid();
-        String path = "/ordered-trucks/" + Common.selectedOrder.getCompanyID() + "/ordered-trucks/" + mUID;
+        String path = "/trips/" + Common.selectedOrder.getTripID();
 
         fs.document(path).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
@@ -90,44 +89,23 @@ public class LoadingBay extends AppCompatActivity {
         btnStartTrip.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                FirebaseFirestore fs = FirebaseFirestore.getInstance();
-                String mUID = FirebaseAuth.getInstance().getUid();
-                String from = "/ordered-trucks/" + Common.selectedOrder.getCompanyID() + "/ordered-trucks/" + mUID;
-                String to = "/trips/";
-
-                final DocumentReference fromDoc = fs.document(from);
-                final DocumentReference toDoc = fs.collection(to).document();
-                final DocumentReference fromDocDriver = fs.document("/drivers/" + mUID + "/orders/"
-                        + Common.selectedOrder.getCompanyID());
-                final DocumentReference toDocDriver =
-                        fs.document("/drivers/" + mUID + "/trips/" + Common.selectedOrder.getCompanyID());
+                final FirebaseFirestore fs = FirebaseFirestore.getInstance();
+                final String path = "trips/" + Common.selectedOrder.getTripID();
 
                 final Map<String, Object> data = new HashMap<>();
-                data.put("driverID", mUID);
-                data.put("active", true);
-                data.put("tripID", toDoc.getId());
+                data.put("status", 3);
 
-                fromDoc.set(data, SetOptions.merge()).addOnCompleteListener(new OnCompleteListener<Void>() {
+                fs.document(path).set(data, SetOptions.merge()).addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         if (!task.isSuccessful()) return;
 
-                        fromDocDriver.set(data, SetOptions.merge()).addOnSuccessListener(new OnSuccessListener<Void>() {
+                        fs.document(path).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                             @Override
-                            public void onSuccess(Void aVoid) {
-                                fromDoc.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                        Common.currentTrip = task.getResult().toObject(Trip.class);
-                                        Common.currentTrip.setTripID(toDoc.getId());
-
-                                        Utils.moveFirestoreDocument(fromDoc, toDoc);
-                                        Utils.moveFirestoreDocument(fromDocDriver, toDocDriver);
-
-                                        startActivity(new Intent(getApplicationContext(), TripProcessing.class));
-                                        finish();
-                                    }
-                                });
+                            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                Common.currentTrip = documentSnapshot.toObject(Trip.class);
+                                startActivity(new Intent(getApplicationContext(), TripProcessing.class));
+                                finish();
                             }
                         });
                     }

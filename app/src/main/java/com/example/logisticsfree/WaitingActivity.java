@@ -51,8 +51,7 @@ public class WaitingActivity extends AppCompatActivity {
         startService(new Intent(this, TrackingService.class));
 
         FirebaseFirestore fs = FirebaseFirestore.getInstance();
-        String mUID = FirebaseAuth.getInstance().getUid();
-        String orderPath = "/ordered-trucks/" + Common.selectedOrder.getCompanyID() + "/ordered-trucks/" + mUID;
+        String orderPath = "/trips/" + Common.selectedOrder.getTripID();
         registration = fs.document(orderPath).addSnapshotListener(new EventListener<DocumentSnapshot>() {
             @Override
             public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
