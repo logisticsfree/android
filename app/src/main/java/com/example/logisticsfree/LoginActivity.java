@@ -74,6 +74,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(LoginActivity.this, ResetPasswordActivity.class));
+
                 Log.d(TAG, "Link CLicked");
             }
         });
@@ -228,9 +229,10 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
                                 Toast.makeText(LoginActivity.this, "Signup successful!", Toast.LENGTH_LONG).show();
                                 setResult(Activity.RESULT_OK, new Intent().putExtra("success", true));
-                                startActivity(new Intent(LoginActivity.this, HomeActivity.class));
-
+                                startActivity(new Intent(getApplicationContext(), HomeActivity.class));
                                 finish();
+                                Intent intent = new Intent("finish_activity_main");
+                                sendBroadcast(intent);
                             }
                         }
                     });

@@ -39,6 +39,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.google.maps.DirectionsApi;
 import com.google.maps.GeoApiContext;
 import com.google.maps.android.PolyUtil;
@@ -136,6 +137,7 @@ public class TripProcessing extends AppCompatActivity implements OnMapReadyCallb
                                     DateTime now = new DateTime();
                                     String origin = lastLocation[0] + ", " + lastLocation[1];
                                     double[] dest = getCoordinates();
+                                    Log.d(TAG, "run: " + dest);
                                     String destination = dest[0] + ", " + dest[1];
                                     Log.d(TAG, "run: " + destination);
                                     DirectionsResult result = DirectionsApi.newRequest(getGeoContext())
@@ -202,17 +204,16 @@ public class TripProcessing extends AppCompatActivity implements OnMapReadyCallb
 
         int noOfOrders = Iterators.size(ordersJson.keys());
         double[][] dists = new double[noOfOrders][2];
-        long nextDistIndex = noOfOrders;
+        int nextDistIndex = noOfOrders - 1;
         for (Iterator<String> it = ordersJson.keys(); it.hasNext(); ) {
             String key = it.next();
             try {
-                HashMap order = (HashMap) ordersJson.get(key);
-                HashMap dist = (HashMap) order.get("distributor");
-                Log.d(TAG, "getCoordinates: " + key + "-^*^*^*-" + dist);
-                long seqNo = (long) order.get("seqNo");
+                JSONObject order = ordersJson.getJSONObject(key);
+                JSONObject dist = order.getJSONObject("distributor");
+                int seqNo = order.getInt("seqNo");
 
-                if (order.get("completed") != null) {
-                    if (!(boolean) order.get("completed")) {
+                if (order.has("completed")) {
+                    if (!order.getBoolean("completed")) {
                         if (seqNo <= nextDistIndex) {
                             nextDistIndex = seqNo;
                         }
@@ -223,14 +224,13 @@ public class TripProcessing extends AppCompatActivity implements OnMapReadyCallb
                     }
                 }
 
-                dists[(int) seqNo] = new double[]{(double) dist.get("latitude"),
-                        (double) dist.get("longitude")};
+                dists[seqNo] = new double[]{(double) dist.get("latitude"), (double) dist.get("longitude")};
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         }
         Log.d(TAG, "getCoordinates:5 " + nextDistIndex);
-        return dists[(int) nextDistIndex];
+        return dists[nextDistIndex];
     }
 
     private List<Marker> addMarkersToMap(DirectionsResult results, GoogleMap mMap) {
