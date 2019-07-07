@@ -16,6 +16,8 @@ import com.example.logisticsfree.Common.Common;
 import com.example.logisticsfree.Common.Utils;
 import com.example.logisticsfree.Remote.IFCMService;
 import com.example.logisticsfree.Remote.IGoogleAPI;
+import com.example.logisticsfree.models.Trip;
+import com.example.logisticsfree.trip.TripProcessing;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -125,10 +127,26 @@ public class CustomerCall extends AppCompatActivity {
     }
 
     private void moveRequestToOrder(String customerID) {
-        DocumentReference requestPath = fs.document("order-requests/" + customerID + "/order-requests/" + mUser.getUid());
-        DocumentReference orderPath = fs.document("ordered-trucks/" + customerID + "/ordered-trucks/" + mUser.getUid());
+        String from = "order-requests/" + customerID + "/order-requests/" + mUser.getUid();
+        String to = "trips/";
 
-        Utils.moveFirestoreDocument(requestPath, orderPath);
+        final DocumentReference fromDoc = fs.document(from);
+        final DocumentReference toDoc = fs.collection(to).document();
+
+        final Map<String, Object> data = new HashMap<>();
+        data.put("driverID", mUser.getUid());
+        data.put("tripID", toDoc.getId());
+        data.put("status", 0);
+        data.put("active", false);
+
+        fromDoc.set(data, SetOptions.merge()).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (!task.isSuccessful()) return;
+
+                Utils.moveFirestoreDocument(fromDoc, toDoc);
+            }
+        });
     }
 
 //    public void moveFirestoreDocument(final DocumentReference fromPath, final DocumentReference toPath) {

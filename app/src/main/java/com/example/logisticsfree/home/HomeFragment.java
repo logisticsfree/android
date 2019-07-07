@@ -68,10 +68,12 @@ public class HomeFragment extends Fragment implements ListItemsPresenter {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         mUser = FirebaseAuth.getInstance().getCurrentUser();
         afs = FirebaseFirestore.getInstance();
-        loadFromFirestore();
+
         getActivity().setTitle("Orders");
+        loadFromFirestore();
 
         broadcastReceiver = new BroadcastReceiver() {
             @Override
@@ -82,8 +84,7 @@ public class HomeFragment extends Fragment implements ListItemsPresenter {
                 }
             }
         };
-        getActivity().registerReceiver(broadcastReceiver, new IntentFilter(
-                "finish_fragment_home"));
+        getActivity().registerReceiver(broadcastReceiver, new IntentFilter("finish_fragment_home"));
     }
 
     @Override
@@ -98,10 +99,8 @@ public class HomeFragment extends Fragment implements ListItemsPresenter {
     public View onCreateView(@NonNull LayoutInflater inflater,
                              @android.support.annotation.Nullable ViewGroup container,
                              @android.support.annotation.Nullable Bundle savedInstanceState) {
-        FragmentHomeBinding mBinding = DataBindingUtil.inflate(inflater,
-                R.layout.fragment_home, container, false);
-        mBinding.setListLayoutManager(new LinearLayoutManager(getActivity(),
-                LinearLayoutManager.VERTICAL, false));
+        FragmentHomeBinding mBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_home, container, false);
+        mBinding.setListLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
         mBinding.setModelList(initList());
         mBinding.setItemAnimator(new DefaultItemAnimator());
 
@@ -109,36 +108,43 @@ public class HomeFragment extends Fragment implements ListItemsPresenter {
     }
 
     private void loadFromFirestore() {
-        ordersListenerReg = afs.collection("drivers/" + mUser.getUid() +
-                "/orders/")
+        ordersListenerReg = afs.collection("drivers/" + mUser.getUid() + "/trips/")
                 .addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
                 listItems.clear();
-                listItems.add(new RecyclerViewBindingAdapter.AdapterDataItem(R.layout.layout_listitem_heading,
-                        new Pair<Integer, Object>(BR.headingModel,
-                                new HeadingModel("Your Orders"))));
+                listItems.add(new RecyclerViewBindingAdapter.AdapterDataItem(
+                        R.layout.layout_listitem_heading,
+                        new Pair<Integer, Object>(
+                                BR.headingModel,
+                                new HeadingModel("Your Orders"))
+                        )
+                );
 
-                List<RecyclerViewBindingAdapter.AdapterDataItem> list =
-                        new ArrayList<>();
+                List<RecyclerViewBindingAdapter.AdapterDataItem> list = new ArrayList<>();
                 for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
-                    if (doc.getBoolean("arrived") != null) { // if arrived is
-                        // not null and
-                        if (!doc.getBoolean("arrived")) {   // it's set to false
-                            addToList(list, doc);
-                        } else {
-                            Common.selectedOrder = doc.toObject(Order.class);
-                            Intent intent = new Intent(getContext(),
-                                    WaitingActivity.class);
-                            startActivity(intent);
-                            getActivity().finish();
-                            return;
-                        }
-                    } else {    // or arrived is not set
+                    int status = (int) (long) doc.get("status");
+
+                    if (status == 0) {    // status == 0 means -> accepted only (order)
                         addToList(list, doc);
+                    } else if (status == 1) {
+                // status==1 means -> truck has arrived to warehouse, no point of looping anymore
+                // should go to the waitingActivity
+                        Common.selectedOrder = doc.toObject(Order.class);
+                        Intent intent = new Intent(getContext(), WaitingActivity.class);
+                        startActivity(intent);
+                        getActivity().finish();
+                        return;
+                    } else if (status == 3) {
+                // status==3 means -> this trip is currently processing, no point of looping anymore
+                // should go to the TripProcessing activity
+                        Common.currentTrip= doc.toObject(Trip.class);
+                        startActivity(new Intent(getContext(), TripProcessing.class));
+                        getActivity().finish();
+                        return;
                     }
                 }
-                checkForProcessingTrip();
+//                checkForProcessingTrip();
                 listItems.addAll(list);
             }
         });

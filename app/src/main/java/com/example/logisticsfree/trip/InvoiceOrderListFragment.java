@@ -85,7 +85,7 @@ public class InvoiceOrderListFragment extends Fragment implements ListItemsPrese
 
     private void loadFromFirestore() {
         afs.collection("drivers/" + mUser.getUid() + "/trips/")
-                .whereEqualTo("active", true).limit(1).get()
+                .whereEqualTo("status", 3).limit(1).get()
                 .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                     @Override
                     public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
@@ -94,28 +94,25 @@ public class InvoiceOrderListFragment extends Fragment implements ListItemsPrese
                                 new Pair<Integer, Object>(BR.headingModel,
                                         new HeadingModel("Remaining Invoices"))));
 
-                        List<InvoiceOrdersRecyclerViewAdapter.AdapterDataItem> list =
-                                new ArrayList<>();
+                        List<InvoiceOrdersRecyclerViewAdapter.AdapterDataItem> list = new ArrayList<>();
 
                         if (queryDocumentSnapshots.size() < 1) {
                             return;
                         }
                         String tripID = Common.currentTrip.getTripID();
-                        Common.currentTrip =
-                                queryDocumentSnapshots.getDocuments().get(0).toObject(Trip.class);
+                        Common.currentTrip = queryDocumentSnapshots.getDocuments().get(0).toObject(Trip.class);
                         Common.currentTrip.setTripID(tripID);
-                        Log.d(TAG,
-                                "onSuccess: " + Common.currentTrip.getTripID() + " " + Common.currentTrip.getOrders().values());
-                        Map<String, Object> fulDoc =
-                                queryDocumentSnapshots.getDocuments().get(0).getData();
+
+                        Log.d(TAG, "onSuccess: " + Common.currentTrip.getTripID() + " " + Common.currentTrip.getOrders().values());
+
+                        Map<String, Object> fulDoc = queryDocumentSnapshots.getDocuments().get(0).getData();
                         Map orders = (Map) fulDoc.get("orders");
                         Collection<HashMap> ordersList = orders.values();
 
                         for (HashMap orderMap : ordersList) {
                             Gson gson = new Gson();
                             JsonElement jsonElement = gson.toJsonTree(orderMap);
-                            Invoice order = gson.fromJson(jsonElement,
-                                    Invoice.class);
+                            Invoice order = gson.fromJson(jsonElement, Invoice.class);
 
                             if (order.isCompleted() != null) { // if arrived
                                 // is not null and
@@ -138,8 +135,7 @@ public class InvoiceOrderListFragment extends Fragment implements ListItemsPrese
     }
 
     //    needed because `this` couldn't get properly inside firebase Listener
-    private void addToList(List<InvoiceOrdersRecyclerViewAdapter.AdapterDataItem> list,
-                           Invoice order) {
+    private void addToList(List<InvoiceOrdersRecyclerViewAdapter.AdapterDataItem> list, Invoice order) {
         if (order != null) {
             if (order.isCompleted() != null) {
                 if (!order.isCompleted()) {
@@ -153,9 +149,10 @@ public class InvoiceOrderListFragment extends Fragment implements ListItemsPrese
 
     private ObservableList initList() {
         listItems = new ObservableArrayList<>();
-        listItems.add(new InvoiceOrdersRecyclerViewAdapter.AdapterDataItem(R.layout.layout_listitem_heading,
-                new Pair<Integer, Object>(BR.headingModel, new HeadingModel(
-                        "Remaining Invoices"))));
+        listItems.add(new InvoiceOrdersRecyclerViewAdapter.AdapterDataItem(
+                R.layout.layout_listitem_heading,
+                new Pair<Integer, Object>(BR.headingModel, new HeadingModel("Remaining Invoices")))
+        );
         Log.d(TAG, "initList: " + R.layout.layout_listitem_heading);
         return listItems;
     }

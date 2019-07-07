@@ -4,19 +4,30 @@ import java.util.Map;
 
 public class Trip {
     String date, time, companyID, driverID, tripID;
+    int status;
     Warehouse warehouse;
     Map<String, Object> orders;
     Boolean active;
 
-    public Trip(String date, String time, String companyID, String driverID, String tripID, Warehouse warehouse, Map<String, Object> orders, Boolean active) {
+    public Trip(String date, String time, String companyID, String driverID, String tripID,
+                int status, Warehouse warehouse, Map<String, Object> orders, Boolean active) {
         this.date = date;
         this.time = time;
         this.companyID = companyID;
         this.driverID = driverID;
         this.tripID = tripID;
+        this.status = status;
         this.warehouse = warehouse;
         this.orders = orders;
         this.active = active;
+    }
+
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
     }
 
     public String getTripID() {
