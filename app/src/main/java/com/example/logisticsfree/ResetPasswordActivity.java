@@ -84,15 +84,13 @@ public class ResetPasswordActivity extends AppCompatActivity {
                                 Toast.makeText(ResetPasswordActivity.this,
                                         "Failed to send reset email! " + Objects.requireNonNull(task.getException()).getMessage(),
                                         Toast.LENGTH_LONG).show();
-
                             }
                             showProgress(false);
                         }
                     });
         }
-
-
     }
+    
     private boolean isEmailValid(String email) {
         return (!TextUtils.isEmpty(email) && Patterns.EMAIL_ADDRESS.matcher(email).matches());
     }
